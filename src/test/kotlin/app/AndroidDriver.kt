@@ -17,7 +17,7 @@ class AndroidDriver(private val autoLaunch: Boolean) {
     fun getAndroidDriver(retryCount: Int): AppiumDriver<MobileElement> {
         try {
             return io.appium.java_client.android.AndroidDriver(
-                URL("http://localhost:4724/"), getCapabilities()
+                URL("http://localhost:4723/"), getCapabilities()
             )
         } catch (e: SessionNotCreatedException) {
             e.printStackTrace()
