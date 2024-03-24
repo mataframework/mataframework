@@ -1,27 +1,31 @@
 package uitests.ui
 
-import io.appium.java_client.pagefactory.AndroidFindBy
-import io.appium.java_client.pagefactory.AppiumFieldDecorator
-import org.openqa.selenium.WebElement
-import org.openqa.selenium.support.CacheLookup
-import org.openqa.selenium.support.PageFactory
+import app.App
+import io.appium.java_client.MobileElement
+import org.openqa.selenium.By
+import pages.PageObject
 
-class TopNavigation(appiumFieldDecorator: AppiumFieldDecorator) {
-    @CacheLookup
-    @AndroidFindBy(xpath = "//androidx.compose.ui.platform.ComposeView[@resource-id=\"ru.kinopoisk:id/top_navigation\"]")
-    private lateinit var navigationElement: WebElement
+class TopNavigation(app: App) : PageObject(app) {
 
-    @CacheLookup
-    @AndroidFindBy(xpath = "//android.widget.TextView[@text=\"Моё кино\"]")
-    private lateinit var myCinemaElement: WebElement
+    private val navigationLocation: By = by(
+            By.xpath("//androidx.compose.ui.platform.ComposeView[@resource-id=\"ru.kinopoisk:id/top_navigation\"]"),
+            By.xpath("") //TODO: fill for iOS
+    )
 
-    @CacheLookup
-    @AndroidFindBy(xpath = "//android.widget.TextView[@text=\"Спорт\"]")
-    private lateinit var sportElement: WebElement
+    private val myCinemaLocation: By = by(
+            By.xpath("//android.widget.TextView[@text=\"Моё кино\"]"),
+            By.xpath("") //TODO: fill for iOS
+    )
 
-    init {
-        PageFactory.initElements(appiumFieldDecorator, this)
-    }
+    private val sportLocation: By = by(
+            By.xpath("//android.widget.TextView[@text=\"Спорт\"]"),
+            By.xpath("") //TODO: fill for iOS
+    )
+
+
+    private var navigationElement: MobileElement = waitForElement(navigationLocation)
+    private var myCinemaElement: MobileElement = navigationElement.findElement(myCinemaLocation)
+    private var sportElement: MobileElement = navigationElement.findElement(sportLocation)
 
     fun isMyCinemaActive(): Boolean {
         return "true" == myCinemaElement.getAttribute("focused")

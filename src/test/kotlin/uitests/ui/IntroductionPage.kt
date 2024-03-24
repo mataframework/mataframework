@@ -1,22 +1,32 @@
 package uitests.ui
 
-import io.appium.java_client.pagefactory.AndroidFindBy
-import io.appium.java_client.pagefactory.AppiumFieldDecorator
-import org.openqa.selenium.WebElement
-import org.openqa.selenium.support.PageFactory
+import app.App
+import io.appium.java_client.MobileElement
+import org.openqa.selenium.By
+import pages.PageObject
 
-class IntroductionPage(private val appiumFieldDecorator: AppiumFieldDecorator) {
-    @AndroidFindBy(id = "ru.kinopoisk:id/description")
-    private lateinit var descriptionElement: WebElement
-    @AndroidFindBy(id = "ru.kinopoisk:id/button_next")
-    private lateinit var nextButtonElement: WebElement
+class IntroductionPage(app: App) : PageObject(app) {
+
+    private val descriptionLocation: By = by(
+            By.id("ru.kinopoisk:id/description"),
+            By.xpath("") //TODO: fill for iOS
+    )
+
+    private val nextButtonLocation: By = by(
+            By.id("ru.kinopoisk:id/button_next"),
+            By.xpath("") //TODO: fill for iOS
+    )
+
+    private lateinit var descriptionElement: MobileElement
+    private lateinit var nextButtonElement: MobileElement
 
     init {
         reload()
     }
 
     fun reload() {
-        PageFactory.initElements(appiumFieldDecorator, this)
+        descriptionElement = waitForElement(descriptionLocation)
+        nextButtonElement = waitForElement(nextButtonLocation)
     }
 
     fun clickNext() {

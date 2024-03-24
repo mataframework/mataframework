@@ -1,32 +1,28 @@
 package uitests.ui
 
-import io.appium.java_client.AppiumDriver
+import app.App
 import io.appium.java_client.MobileElement
-import io.appium.java_client.pagefactory.AndroidFindBy
-import io.appium.java_client.pagefactory.AppiumFieldDecorator
-import org.openqa.selenium.WebElement
-import org.openqa.selenium.support.CacheLookup
-import org.openqa.selenium.support.PageFactory
-import java.time.Duration
+import org.openqa.selenium.By
+import pages.PageObject
 
-class PlusAdsPage(private val appiumFieldDecorator: AppiumFieldDecorator) {
-    @CacheLookup
-    @AndroidFindBy(xpath = "//android.widget.Button[@resource-id=\"ru.kinopoisk:id/button_skip_subscription\"]")
-    private lateinit var skipButtonElement: WebElement
-    @CacheLookup
-    @AndroidFindBy(xpath = "//android.widget.TextView[@resource-id=\"ru.kinopoisk:id/primary_offer_text\"]")
-    private lateinit var primaryOfferTextElement: WebElement
-    @CacheLookup
-    @AndroidFindBy(xpath = "//android.widget.TextView[@resource-id=\"ru.kinopoisk:id/secondary_offer_text\"]")
-    private lateinit var secondaryOfferTextElement: WebElement
+class PlusAdsPage(app: App) : PageObject(app) {
+    private val skipButtonLocation: By = by(
+            By.xpath("//android.widget.Button[@resource-id=\"ru.kinopoisk:id/button_skip_subscription\"]"),
+            By.xpath("") //TODO: fill for iOS
+    )
+    private val primaryOfferTextLocation: By = by(
+            By.xpath("//android.widget.TextView[@resource-id=\"ru.kinopoisk:id/primary_offer_text\"]"),
+            By.xpath("") //TODO: fill for iOS
+    )
 
-    init {
-        reload()
-    }
+    private val secondaryOfferTextLocation: By = by(
+            By.xpath("//android.widget.TextView[@resource-id=\"ru.kinopoisk:id/secondary_offer_text\"]"),
+            By.xpath("") //TODO: fill for iOS
+    )
 
-    fun reload() {
-        PageFactory.initElements(appiumFieldDecorator, this)
-    }
+    private var skipButtonElement: MobileElement = waitForElement(skipButtonLocation)
+    private var primaryOfferTextElement: MobileElement = waitForElement(primaryOfferTextLocation)
+    private var secondaryOfferTextElement: MobileElement = waitForElement(secondaryOfferTextLocation)
 
     fun clickSkip() {
         skipButtonElement.click()

@@ -1,18 +1,12 @@
 package uitests.ui
 
 import app.App
-import io.appium.java_client.pagefactory.AppiumFieldDecorator
+import io.appium.java_client.MobileElement
 import org.openqa.selenium.By
-import org.openqa.selenium.WebElement
-import org.openqa.selenium.support.ui.ExpectedConditions
-import org.openqa.selenium.support.ui.WebDriverWait
 import pages.PageObject
 
 
-class LandingPage(appiumFieldDecorator: AppiumFieldDecorator, app: App, waitDriver: WebDriverWait) : PageObject(app) {
-
-    val topNavigation = TopNavigation(appiumFieldDecorator)
-    val bottomNavigation = BottomNavigation(appiumFieldDecorator)
+class LandingPage(app: App) : PageObject(app) {
 
     private val contentLocation: By = by(
             By.xpath("(//android.widget.FrameLayout[@resource-id=\"ru.kinopoisk:id/fragment_container\"])[2]"),
@@ -41,17 +35,13 @@ class LandingPage(appiumFieldDecorator: AppiumFieldDecorator, app: App, waitDriv
             By.xpath("") //TODO: fill for iOS
     )
 
-    var contentElement: WebElement
-    var ads1stLineElement: WebElement
-    var ads2ndLineElement: WebElement
-    var tryFreeButton: WebElement
-    var infoBlockElement: WebElement
+    var contentElement: MobileElement = waitForElement(contentLocation)
+    var ads1stLineElement: MobileElement = contentElement.findElement(ads1stLineLocation)
+    var ads2ndLineElement: MobileElement = contentElement.findElement(ads2ndLineLocation)
+    var tryFreeButton: MobileElement = contentElement.findElement(tryFreeButtonLocation)
+    var infoBlockElement: MobileElement = contentElement.findElement(infoBlockLocation)
 
-    init {
-        contentElement = waitDriver.until(ExpectedConditions.visibilityOfElementLocated(contentLocation))
-        ads1stLineElement = contentElement.findElement(ads1stLineLocation)
-        ads2ndLineElement = contentElement.findElement(ads2ndLineLocation)
-        tryFreeButton = contentElement.findElement(tryFreeButtonLocation)
-        infoBlockElement = contentElement.findElement(infoBlockLocation)
-    }
+    val topNavigation = TopNavigation(app)
+    val bottomNavigation = BottomNavigation(app)
+
 }

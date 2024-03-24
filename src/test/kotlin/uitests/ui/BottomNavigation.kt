@@ -1,27 +1,30 @@
 package uitests.ui
 
-import io.appium.java_client.pagefactory.AndroidFindBy
-import io.appium.java_client.pagefactory.AppiumFieldDecorator
-import org.openqa.selenium.WebElement
-import org.openqa.selenium.support.CacheLookup
-import org.openqa.selenium.support.PageFactory
+import app.App
+import io.appium.java_client.MobileElement
+import org.openqa.selenium.By
+import pages.PageObject
 
-class BottomNavigation(appiumFieldDecorator: AppiumFieldDecorator) {
-    @CacheLookup
-    @AndroidFindBy(xpath = "//android.widget.FrameLayout[@resource-id=\"ru.kinopoisk:id/bottom_navigation_bar\"]")
-    private lateinit var navigationElement: WebElement
+class BottomNavigation(app: App) : PageObject(app) {
+    private val navigationLocation: By = by(
+            By.xpath("//android.widget.FrameLayout[@resource-id=\"ru.kinopoisk:id/bottom_navigation_bar\"]"),
+            By.xpath("") //TODO: fill for iOS
+    )
 
-    @CacheLookup
-    @AndroidFindBy(id = "ru.kinopoisk:id/hd")
-    private lateinit var hdElement: WebElement
+    private val hdLocation: By = by(
+            By.id( "ru.kinopoisk:id/hd"),
+            By.xpath("") //TODO: fill for iOS
+    )
 
-    @CacheLookup
-    @AndroidFindBy(id = "ru.kinopoisk:id/afisha")
-    private lateinit var mediaElement: WebElement
+    private val mediaLocation: By = by(
+            By.id("ru.kinopoisk:id/afisha"),
+            By.xpath("") //TODO: fill for iOS
+    )
 
-    init {
-        PageFactory.initElements(appiumFieldDecorator, this)
-    }
+
+    private var navigationElement: MobileElement = waitForElement(navigationLocation)
+    private var hdElement: MobileElement = navigationElement.findElement(hdLocation)
+    private var mediaElement: MobileElement = navigationElement.findElement(mediaLocation)
 
     fun isHDActive(): Boolean {
         return "true" == hdElement.getAttribute("selected")
