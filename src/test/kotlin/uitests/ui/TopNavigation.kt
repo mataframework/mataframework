@@ -1,22 +1,29 @@
 package uitests.ui
 
-import io.appium.java_client.AppiumDriver
-import io.appium.java_client.MobileElement
-import org.openqa.selenium.By
+import io.appium.java_client.pagefactory.AndroidFindBy
+import io.appium.java_client.pagefactory.AppiumFieldDecorator
 import org.openqa.selenium.WebElement
-import org.openqa.selenium.support.ui.ExpectedConditions
-import org.openqa.selenium.support.ui.FluentWait
+import org.openqa.selenium.support.CacheLookup
+import org.openqa.selenium.support.PageFactory
 
-class TopNavigation(driver: FluentWait<AppiumDriver<MobileElement>?>) {
-    private val location = By.xpath("//androidx.compose.ui.platform.ComposeView[@resource-id=\"ru.kinopoisk:id/top_navigation\"]")
-    private val myCinemaLocation = By.xpath("//android.widget.TextView[@text=\"Моё кино\"]")
-    private val sportLocation = By.xpath("//android.widget.TextView[@text=\"Спорт\"]")
+class TopNavigation(appiumFieldDecorator: AppiumFieldDecorator) {
+    @CacheLookup
+    @AndroidFindBy(xpath = "//androidx.compose.ui.platform.ComposeView[@resource-id=\"ru.kinopoisk:id/top_navigation\"]")
+    private lateinit var navigationElement: WebElement
 
-    private var navigationElement = driver.until(ExpectedConditions.visibilityOfElementLocated(location))
-    private var myCinemaElement = navigationElement.findElement<WebElement>(myCinemaLocation)
-    private var sportElement = navigationElement.findElement<WebElement>(sportLocation)
+    @CacheLookup
+    @AndroidFindBy(xpath = "//android.widget.TextView[@text=\"Моё кино\"]")
+    private lateinit var myCinemaElement: WebElement
 
-    fun isMyCinemaActive() : Boolean {
+    @CacheLookup
+    @AndroidFindBy(xpath = "//android.widget.TextView[@text=\"Спорт\"]")
+    private lateinit var sportElement: WebElement
+
+    init {
+        PageFactory.initElements(appiumFieldDecorator, this)
+    }
+
+    fun isMyCinemaActive(): Boolean {
         return "true" == myCinemaElement.getAttribute("focused")
     }
 
@@ -24,7 +31,7 @@ class TopNavigation(driver: FluentWait<AppiumDriver<MobileElement>?>) {
         myCinemaElement.click()
     }
 
-    fun isSportActive() : Boolean {
+    fun isSportActive(): Boolean {
         return "true" == sportElement.getAttribute("focused")
     }
 

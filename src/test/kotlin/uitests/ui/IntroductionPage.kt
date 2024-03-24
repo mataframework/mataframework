@@ -2,20 +2,30 @@ package uitests.ui
 
 import io.appium.java_client.AppiumDriver
 import io.appium.java_client.MobileElement
-import org.openqa.selenium.By
+import io.appium.java_client.pagefactory.AndroidFindBy
+import io.appium.java_client.pagefactory.AppiumFieldDecorator
 import org.openqa.selenium.WebElement
-import org.openqa.selenium.support.ui.ExpectedConditions
-import org.openqa.selenium.support.ui.FluentWait
+import org.openqa.selenium.support.PageFactory
+import java.time.Duration
 
-class IntroductionPage(driver: FluentWait<AppiumDriver<MobileElement>?>) {
-    private val contentContainerLocation = By.xpath("//android.view.ViewGroup[@resource-id=\"ru.kinopoisk:id/container\"]")
-    private val descriptionLocation = By.id("ru.kinopoisk:id/description")
-    private val nextButtonLocation = By.id("ru.kinopoisk:id/button_next")
+class IntroductionPage(private val appiumFieldDecorator: AppiumFieldDecorator) {
+//    @CacheLookup
+//    @AndroidFindBy(xpath = "//android.view.ViewGroup[@resource-id=\"ru.kinopoisk:id/container\"]")
+//    private lateinit var contentContainerElement: WebElement
+//    @CacheLookup
+    @AndroidFindBy(id = "ru.kinopoisk:id/description")
+    private lateinit var descriptionElement: WebElement
+//    @CacheLookup
+    @AndroidFindBy(id = "ru.kinopoisk:id/button_next")
+    private lateinit var nextButtonElement: WebElement
 
+    init {
+        reload()
+    }
 
-    private val contentContainerElement: WebElement = driver.until(ExpectedConditions.visibilityOfElementLocated(contentContainerLocation))
-    private val descriptionElement: WebElement = contentContainerElement.findElement(descriptionLocation)
-    private val nextButtonElement: WebElement = contentContainerElement.findElement(nextButtonLocation)
+    fun reload() {
+        PageFactory.initElements(appiumFieldDecorator, this)
+    }
 
     fun clickNext() {
         nextButtonElement.click()

@@ -1,16 +1,21 @@
 package uitests.ui
 
-import io.appium.java_client.AppiumDriver
-import io.appium.java_client.MobileElement
-import org.openqa.selenium.By
-import org.openqa.selenium.support.ui.ExpectedConditions
-import org.openqa.selenium.support.ui.FluentWait
+import io.appium.java_client.pagefactory.AndroidFindBy
+import io.appium.java_client.pagefactory.AppiumFieldDecorator
+import org.openqa.selenium.WebElement
+import org.openqa.selenium.support.CacheLookup
+import org.openqa.selenium.support.PageFactory
 
-class LandingPage(driver: FluentWait<AppiumDriver<MobileElement>?>) {
-    private val contentLocation = By.xpath("(//android.widget.FrameLayout[@resource-id=\"ru.kinopoisk:id/fragment_container\"])[2]")
 
-    val topNavigation = TopNavigation(driver)
-    val contentElement = driver.until(ExpectedConditions.visibilityOfElementLocated(contentLocation))
-    val bottomNavigation = BottomNavigation(driver)
+class LandingPage(appiumFieldDecorator: AppiumFieldDecorator) {
 
+    val topNavigation = TopNavigation(appiumFieldDecorator)
+    @CacheLookup
+    @AndroidFindBy(xpath = "(//android.widget.FrameLayout[@resource-id=\"ru.kinopoisk:id/fragment_container\"])[2]")
+    lateinit var contentElement: WebElement
+    val bottomNavigation = BottomNavigation(appiumFieldDecorator)
+
+    init {
+        PageFactory.initElements(appiumFieldDecorator, this)
+    }
 }

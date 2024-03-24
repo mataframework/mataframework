@@ -1,22 +1,29 @@
 package uitests.ui
 
-import io.appium.java_client.AppiumDriver
-import io.appium.java_client.MobileElement
-import org.openqa.selenium.By
+import io.appium.java_client.pagefactory.AndroidFindBy
+import io.appium.java_client.pagefactory.AppiumFieldDecorator
 import org.openqa.selenium.WebElement
-import org.openqa.selenium.support.ui.ExpectedConditions
-import org.openqa.selenium.support.ui.FluentWait
+import org.openqa.selenium.support.CacheLookup
+import org.openqa.selenium.support.PageFactory
 
-class BottomNavigation(driver: FluentWait<AppiumDriver<MobileElement>?>) {
-    private val location = By.xpath("//android.widget.FrameLayout[@resource-id=\"ru.kinopoisk:id/bottom_navigation_bar\"]")
-    private val hdLocation = By.id("ru.kinopoisk:id/hd")
-    private val mediaLocation = By.id("ru.kinopoisk:id/afisha")
+class BottomNavigation(appiumFieldDecorator: AppiumFieldDecorator) {
+    @CacheLookup
+    @AndroidFindBy(xpath = "//android.widget.FrameLayout[@resource-id=\"ru.kinopoisk:id/bottom_navigation_bar\"]")
+    private lateinit var navigationElement: WebElement
 
-    private var navigationElement = driver.until(ExpectedConditions.visibilityOfElementLocated(location))
-    private var hdElement = navigationElement.findElement<WebElement>(hdLocation)
-    private var mediaElement = navigationElement.findElement<WebElement>(mediaLocation)
+    @CacheLookup
+    @AndroidFindBy(id = "ru.kinopoisk:id/hd")
+    private lateinit var hdElement: WebElement
 
-    fun isHDActive() : Boolean {
+    @CacheLookup
+    @AndroidFindBy(id = "ru.kinopoisk:id/afisha")
+    private lateinit var mediaElement: WebElement
+
+    init {
+        PageFactory.initElements(appiumFieldDecorator, this)
+    }
+
+    fun isHDActive(): Boolean {
         return "true" == hdElement.getAttribute("selected")
     }
 
@@ -24,7 +31,7 @@ class BottomNavigation(driver: FluentWait<AppiumDriver<MobileElement>?>) {
         hdElement.click()
     }
 
-    fun isMediaActive() : Boolean {
+    fun isMediaActive(): Boolean {
         return "true" == mediaElement.getAttribute("selected")
     }
 
