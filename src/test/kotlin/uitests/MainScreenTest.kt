@@ -6,7 +6,7 @@ import io.appium.java_client.pagefactory.AppiumFieldDecorator
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.openqa.selenium.By
+import org.openqa.selenium.support.ui.WebDriverWait
 import uitests.ui.IntroductionPage
 import uitests.ui.LandingPage
 import uitests.ui.PlusAdsPage
@@ -18,34 +18,24 @@ class MainScreenTest {
 
     @Test
     fun checkOpenApp() {
-        val landingPage = LandingPage(appiumFieldDecorator)
+        val waitDriver = WebDriverWait(app.driver, 30, 150)
+
+        val landingPage = LandingPage(appiumFieldDecorator, app, waitDriver)
 
         assertTrue { landingPage.topNavigation.isMyCinemaActive() }
         assertTrue { landingPage.bottomNavigation.isHDActive() }
 
-        val contentElement = landingPage.contentElement
-        assertNotNull(
-                contentElement.findElement(
-                        By.xpath("//android.widget.TextView[@text=\"Подписка Плюс Больше кино\"]")
-                )
-        )
-        assertNotNull(
-                contentElement.findElement(
-                        By.xpath("//android.widget.TextView[@text=\"30 дней бесплатно\"]")
-                )
-        )
-        assertNotNull(
-                contentElement.findElement(
-                        By.xpath("//android.widget.TextView[@text=\"Попробовать бесплатно\"]")
-                )
-        )
-        assertNotNull(
-                contentElement.findElement(
-                        By.xpath("//android.widget.TextView[@text=\"Сервис «Кинопоиск» может " +
-                                "содержать информацию, не предназначенную для несовершеннолетних. \n" +
-                                "Федеральные каналы доступны для бесплатного просмотра круглосуточно.\"]")
-                )
-        )
+        assertNotNull(landingPage.ads1stLineElement)
+        assertTrue { landingPage.ads1stLineElement.isDisplayed }
+
+        assertNotNull(landingPage.ads2ndLineElement)
+        assertTrue { landingPage.ads2ndLineElement.isDisplayed }
+
+        assertNotNull(landingPage.tryFreeButton)
+        assertTrue { landingPage.tryFreeButton.isDisplayed }
+
+        assertNotNull(landingPage.infoBlockElement)
+        assertTrue { landingPage.infoBlockElement.isDisplayed }
     }
 
     companion object {
