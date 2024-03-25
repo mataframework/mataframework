@@ -17,8 +17,6 @@ open class PageObject(val app: App) {
     protected val driver: AppiumDriver<MobileElement>? = app.driver
     protected val waitDriver = WebDriverWait(driver, elementPollingTimeout, elementPollingInterval)
 
-    protected val app_id: String = choiceText("//TODO package app", "//TODO package app")
-
     companion object {
 
         fun by(android: By, ios: By): By {
@@ -42,10 +40,6 @@ open class PageObject(val app: App) {
             .withTimeout(Duration.ofMillis(timeout))
             .pollingEvery(Duration.ofMillis(interval))
             .until(ExpectedConditions.visibilityOfElementLocated(by)) as MobileElement
-    }
-
-    fun terminateApp() {
-        driver!!.terminateApp(app_id)
     }
 
 }
