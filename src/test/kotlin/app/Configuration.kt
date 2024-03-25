@@ -1,7 +1,5 @@
 package app
 
-import kotlin.IllegalArgumentException
-
 object Configuration {
     private enum class Platform {
         ANDROID, IOS
@@ -11,6 +9,8 @@ object Configuration {
     private var androidVersion = "8.1"
     private var iosVersion = "16.4"
     private var iosDeviceName = "iPhone 14"
+    private var defaultTimeout = 30000L
+    private var defaultSleep = 100L
 
     fun isAndroid(): Boolean {
         return platform == Platform.ANDROID
@@ -30,6 +30,14 @@ object Configuration {
 
     fun getIosDeviceName(): String {
         return iosDeviceName
+    }
+
+    fun getDefaultTimeout(): Long {
+        return defaultTimeout
+    }
+
+    fun getDefaultSleep(): Long {
+        return defaultSleep
     }
 
     init {
