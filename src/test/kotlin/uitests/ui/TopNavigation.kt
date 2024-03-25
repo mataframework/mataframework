@@ -7,17 +7,17 @@ import pages.PageObject
 
 class TopNavigation(app: App) : PageObject(app) {
 
-    private val navigationLocation: By = by(
+    private val navigationLocation: By = choose(
             By.xpath("//androidx.compose.ui.platform.ComposeView[@resource-id=\"ru.kinopoisk:id/top_navigation\"]"),
             By.xpath("") //TODO: fill for iOS
     )
 
-    private val myCinemaLocation: By = by(
+    private val myCinemaLocation: By = choose(
             By.xpath("//android.widget.TextView[@text=\"Моё кино\"]"),
             By.xpath("") //TODO: fill for iOS
     )
 
-    private val sportLocation: By = by(
+    private val sportLocation: By = choose(
             By.xpath("//android.widget.TextView[@text=\"Спорт\"]"),
             By.xpath("") //TODO: fill for iOS
     )

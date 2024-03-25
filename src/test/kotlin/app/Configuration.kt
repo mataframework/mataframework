@@ -59,19 +59,23 @@ object Configuration {
             }
         }
 
-        val newAndroidVersion = System.getProperty("androidVersion")
-        if (newAndroidVersion != null && newAndroidVersion.isNotEmpty()) {
-            androidVersion = newAndroidVersion
-        }
+        System.getProperty("androidVersion")?.ifNotBlank { androidVersion = it }
 
-        val newIosVersion = System.getProperty("iosVersion")
-        if (newIosVersion != null && newIosVersion.isNotEmpty()) {
-            iosVersion = newIosVersion
-        }
+        System.getProperty("iosVersion")?.ifNotBlank { iosVersion = it }
 
-        val newIosDeviceName = System.getProperty("iosDeviceName")
-        if (newIosDeviceName != null && newIosDeviceName.isNotEmpty()) {
-            iosDeviceName = newIosDeviceName
-        }
+        System.getProperty("iosDeviceName")?.ifNotBlank { iosDeviceName = it }
+
+        System.getProperty("androidAppId")?.ifNotBlank { androidAppId = it }
+
+        System.getProperty("iosAppId")?.ifNotBlank { iosAppId = it }
+
+        System.getProperty("elementPollingTimeout")?.ifNotBlank { elementPollingTimeout = it.toLong() }
+
+        System.getProperty("elementPollingInterval")?.ifNotBlank { elementPollingInterval = it.toLong() }
+    }
+
+    private inline fun <T : CharSequence> T?.ifNotBlank(block: (T) -> Unit) {
+        this?.takeIf { it.isNotBlank() }
+            ?.also(block)
     }
 }

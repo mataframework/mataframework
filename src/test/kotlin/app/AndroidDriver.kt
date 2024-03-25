@@ -43,7 +43,7 @@ class AndroidDriver(private val autoLaunch: Boolean) {
         val capabilities = DesiredCapabilities()
         capabilities.setCapability(MobileCapabilityType.APP, appFile.absolutePath)
         capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.ANDROID_UIAUTOMATOR2)
-        capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, Platform.ANDROID.toString().toLowerCase())
+        capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, Platform.ANDROID.toString().lowercase())
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android Emulator")
         return capabilities
     }

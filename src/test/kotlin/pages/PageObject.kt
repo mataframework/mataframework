@@ -18,18 +18,29 @@ open class PageObject(val app: App) {
     protected val waitDriver = WebDriverWait(driver, elementPollingTimeout, elementPollingInterval)
 
     companion object {
-
-        fun by(android: By, ios: By): By {
+        /**
+         * Choose one of options based on current testing platform
+         *
+         * @param T type of setting
+         * @param android setting for Android platform
+         * @param ios setting for iOS platform
+         * @return one of passed option
+         */
+        fun <T> choose(android: T, ios: T): T {
             return if (Configuration.isAndroid()) android else ios
         }
 
-        fun choiceText(android: String, ios: String): String {
-            return if (Configuration.isAndroid()) android else ios
-        }
     }
 
-    /*
-     * Elements actions
+    /**
+     * Looking for an element with locator [by].
+     *
+     * @param by - element locator
+     * @param timeout - max awaiting timeout
+     * @param interval - checking interval
+     *
+     * @exception org.openqa.selenium.TimeoutException if element not found for [timeout]
+     * @return found element
      */
     fun waitForElement(
         by: By,
@@ -40,6 +51,27 @@ open class PageObject(val app: App) {
             .withTimeout(Duration.ofMillis(timeout))
             .pollingEvery(Duration.ofMillis(interval))
             .until(ExpectedConditions.visibilityOfElementLocated(by)) as MobileElement
+    }
+
+    /**
+     * Looking for an element with locator [by].
+     * In case if element found invoke [org.openqa.selenium.remote.RemoteWebElement.click].
+     *
+     * @param by - element locator
+     * @param timeout - max awaiting timeout
+     * @param interval - checking interval
+     *
+     * @exception org.openqa.selenium.TimeoutException if element not found for [timeout]
+     * @return found element
+     */
+    fun waitForElementAndClick(
+        by: By,
+        timeout: Long = elementPollingTimeout,
+        interval: Long = elementPollingInterval
+    ): MobileElement {
+        val mobileElement = waitForElement(by, timeout, interval)
+        mobileElement.click()
+        return mobileElement
     }
 
 }

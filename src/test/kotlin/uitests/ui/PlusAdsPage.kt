@@ -6,16 +6,16 @@ import org.openqa.selenium.By
 import pages.PageObject
 
 class PlusAdsPage(app: App) : PageObject(app) {
-    private val skipButtonLocation: By = by(
+    private val skipButtonLocation: By = choose(
             By.xpath("//android.widget.Button[@resource-id=\"ru.kinopoisk:id/button_skip_subscription\"]"),
             By.xpath("") //TODO: fill for iOS
     )
-    private val primaryOfferTextLocation: By = by(
+    private val primaryOfferTextLocation: By = choose(
             By.xpath("//android.widget.TextView[@resource-id=\"ru.kinopoisk:id/primary_offer_text\"]"),
             By.xpath("") //TODO: fill for iOS
     )
 
-    private val secondaryOfferTextLocation: By = by(
+    private val secondaryOfferTextLocation: By = choose(
             By.xpath("//android.widget.TextView[@resource-id=\"ru.kinopoisk:id/secondary_offer_text\"]"),
             By.xpath("") //TODO: fill for iOS
     )

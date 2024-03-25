@@ -5,7 +5,7 @@ import org.openqa.selenium.By
 
 class MainScreen(app: App): PageObject(app) {
 
-    val exampleButton = by(
+    val exampleButton = choose(
         By.id("loginButton"),
         By.id("")
     )
