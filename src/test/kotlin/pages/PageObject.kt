@@ -5,16 +5,17 @@ import app.Configuration
 import io.appium.java_client.AppiumDriver
 import io.appium.java_client.MobileElement
 import org.openqa.selenium.By
+import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.time.Duration
 
 open class PageObject(val app: App) {
 
-    private val defaultTimeout = Configuration.getDefaultTimeout()
-    private val defaultSleep = Configuration.getDefaultSleep()
+    private val elementPollingTimeout = Configuration.getElementPollingTimeout()
+    private val elementPollingInterval = Configuration.getElementPollingInterval()
 
     protected val driver: AppiumDriver<MobileElement>? = app.driver
-    protected val waitDriver = WebDriverWait(driver, defaultTimeout, defaultSleep)
+    protected val waitDriver = WebDriverWait(driver, elementPollingTimeout, elementPollingInterval)
 
     protected val app_id: String = choiceText("//TODO package app", "//TODO package app")
 
@@ -32,9 +33,15 @@ open class PageObject(val app: App) {
     /*
      * Elements actions
      */
-    fun waitForElement(by: By, timeout: Long = defaultTimeout): MobileElement {
-        waitDriver.withTimeout(Duration.ofMillis(timeout))
-        return waitDriver.until(MobileExpectedConditions.visibilityOfElementLocated(by))
+    fun waitForElement(
+        by: By,
+        timeout: Long = elementPollingTimeout,
+        interval: Long = elementPollingInterval
+    ): MobileElement {
+        return waitDriver
+            .withTimeout(Duration.ofMillis(timeout))
+            .pollingEvery(Duration.ofMillis(interval))
+            .until(ExpectedConditions.visibilityOfElementLocated(by)) as MobileElement
     }
 
     fun terminateApp() {

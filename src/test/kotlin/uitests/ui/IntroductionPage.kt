@@ -25,7 +25,7 @@ class IntroductionPage(app: App) : PageObject(app) {
     }
 
     fun reload() {
-        descriptionElement = waitForElement(descriptionLocation)
+        descriptionElement = waitForElement(descriptionLocation, 30000)
         nextButtonElement = waitForElement(nextButtonLocation)
     }
 

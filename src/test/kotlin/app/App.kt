@@ -12,18 +12,13 @@ class App internal constructor(driver: AppiumDriver<MobileElement>?) : AutoClose
     }
 
     override fun close() {
-        if (driver != null) {
-            try {
-                if (Configuration.isiOS()) {
-                    driver!!.terminateApp("//TODO")
-                } else {
-                    driver!!.terminateApp("//TODO")
-                }
-                driver!!.quit()
-            } catch (e: WebDriverException) {
-                e.printStackTrace()
-            }
-            driver = null
+        val appiumDriver = driver ?: return
+        try {
+            appiumDriver.terminateApp(Configuration.getAppId())
+            appiumDriver.quit()
+        } catch (e: WebDriverException) {
+            e.printStackTrace()
         }
+        driver = null
     }
 }

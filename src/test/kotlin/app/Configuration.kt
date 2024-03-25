@@ -9,8 +9,10 @@ object Configuration {
     private var androidVersion = "8.1"
     private var iosVersion = "16.4"
     private var iosDeviceName = "iPhone 14"
-    private var defaultTimeout = 30000L
-    private var defaultSleep = 100L
+    private var androidAppId = ""
+    private var iosAppId = ""
+    private var elementPollingTimeout = 7_000L
+    private var elementPollingInterval = 500L
 
     fun isAndroid(): Boolean {
         return platform == Platform.ANDROID
@@ -32,20 +34,27 @@ object Configuration {
         return iosDeviceName
     }
 
-    fun getDefaultTimeout(): Long {
-        return defaultTimeout
+    fun getElementPollingTimeout(): Long {
+        return elementPollingTimeout
     }
 
-    fun getDefaultSleep(): Long {
-        return defaultSleep
+    fun getElementPollingInterval(): Long {
+        return elementPollingInterval
+    }
+
+    fun getAppId(): String {
+        return when (platform) {
+            Platform.IOS -> iosAppId
+            Platform.ANDROID -> androidAppId
+        }
     }
 
     init {
         val newPlatform = System.getProperty("platform")
         if (newPlatform != null && newPlatform.isNotEmpty()) {
-            when (newPlatform.lowercase()) {
-                "ios" -> platform = Platform.IOS
-                "android" -> platform = Platform.ANDROID
+            platform = when (newPlatform.lowercase()) {
+                "ios" -> Platform.IOS
+                "android" -> Platform.ANDROID
                 else -> throw IllegalArgumentException("Unknown platform: $newPlatform")
             }
         }
