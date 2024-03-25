@@ -6,17 +6,17 @@ import org.openqa.selenium.By
 import pages.PageObject
 
 class BottomNavigation(app: App) : PageObject(app) {
-    private val navigationLocation: By = by(
+    private val navigationLocation: By = choose(
             By.xpath("//android.widget.FrameLayout[@resource-id=\"ru.kinopoisk:id/bottom_navigation_bar\"]"),
             By.xpath("") //TODO: fill for iOS
     )
 
-    private val hdLocation: By = by(
+    private val hdLocation: By = choose(
             By.id( "ru.kinopoisk:id/hd"),
             By.xpath("") //TODO: fill for iOS
     )
 
-    private val mediaLocation: By = by(
+    private val mediaLocation: By = choose(
             By.id("ru.kinopoisk:id/afisha"),
             By.xpath("") //TODO: fill for iOS
     )

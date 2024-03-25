@@ -8,27 +8,27 @@ import pages.PageObject
 
 class LandingPage(app: App) : PageObject(app) {
 
-    private val contentLocation: By = by(
+    private val contentLocation: By = choose(
             By.xpath("(//android.widget.FrameLayout[@resource-id=\"ru.kinopoisk:id/fragment_container\"])[2]"),
             By.xpath("") //TODO: fill for iOS
     )
 
-    private val ads1stLineLocation: By = by(
+    private val ads1stLineLocation: By = choose(
             By.xpath("//android.widget.TextView[@text=\"Подписка Плюс Больше кино\"]"),
             By.xpath("") //TODO: fill for iOS
     )
 
-    private val ads2ndLineLocation: By = by(
+    private val ads2ndLineLocation: By = choose(
             By.xpath("//android.widget.TextView[@text=\"30 дней бесплатно\"]"),
             By.xpath("") //TODO: fill for iOS
     )
 
-    private val tryFreeButtonLocation: By = by(
+    private val tryFreeButtonLocation: By = choose(
             By.xpath("//android.widget.TextView[@text=\"Попробовать бесплатно\"]"),
             By.xpath("") //TODO: fill for iOS
     )
 
-    private val infoBlockLocation: By = by(
+    private val infoBlockLocation: By = choose(
             By.xpath("//android.widget.TextView[@text=\"Сервис «Кинопоиск» может " +
                     "содержать информацию, не предназначенную для несовершеннолетних. \n" +
                     "Федеральные каналы доступны для бесплатного просмотра круглосуточно.\"]"),
