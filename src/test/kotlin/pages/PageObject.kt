@@ -14,6 +14,7 @@ open class PageObject(val app: App) {
 
     private val elementPollingTimeout = Configuration.getElementPollingTimeout()
     private val elementPollingInterval = Configuration.getElementPollingInterval()
+    private val noop = { _: MobileElement -> }
 
     protected val driver: AppiumDriver<MobileElement>? = app.driver
     protected val waitDriver = WebDriverWait(driver, elementPollingTimeout, elementPollingInterval)
@@ -48,7 +49,7 @@ open class PageObject(val app: App) {
         byPlatformProperty: PlatformProperty<By>,
         timeout: Long = elementPollingTimeout,
         interval: Long = elementPollingInterval,
-        consumer: (MobileElement) -> Unit
+        consumer: (MobileElement) -> Unit = noop
     ): PageObject {
         val by = byPlatformProperty.getValue()
         val mobileElement = waitDriver

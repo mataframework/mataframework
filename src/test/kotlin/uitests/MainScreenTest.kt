@@ -3,14 +3,13 @@ package uitests
 import app.App
 import app.AppLauncher
 import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import pages.PageObject
 import uitests.ui.IntroductionPage
 import uitests.ui.LandingPage
 import uitests.ui.PlusAdsPage
-import uitests.ui.UIAttributes
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class MainScreenTest {
@@ -18,24 +17,17 @@ class MainScreenTest {
     @Test
     fun checkOpenApp() {
         pageObject
-            .waitForElementAndGetAttribute(LandingPage.TopNavigation.myCinemaLocation, UIAttributes.focused, 30000) {
-                assertEquals("true", it)
+            .waitForElement(LandingPage.TopNavigation.myCinemaLocation, 30000) {
+                assertEquals("true", it.getAttribute("focused"))
             }
-            .waitForElementAndGetAttribute(LandingPage.BottomNavigation.hdLocation, UIAttributes.selected) {
-                assertEquals("true", it)
+            .waitForElement(LandingPage.BottomNavigation.hdLocation) {
+                assertTrue { it.isSelected }
+                assertTrue { it.isEnabled }
             }
-            .waitForElement(LandingPage.ads1stLineLocation) {
-                assertTrue { it.isDisplayed }
-            }
-            .waitForElement(LandingPage.ads2ndLineLocation) {
-                assertTrue { it.isDisplayed }
-            }
-            .waitForElement(LandingPage.tryFreeButtonLocation) {
-                assertTrue { it.isDisplayed }
-            }
-            .waitForElement(LandingPage.infoBlockLocation) {
-                assertTrue { it.isDisplayed }
-            }
+            .waitForElement(LandingPage.ads1stLineLocation)
+            .waitForElement(LandingPage.ads2ndLineLocation)
+            .waitForElement(LandingPage.tryFreeButtonLocation)
+            .waitForElement(LandingPage.infoBlockLocation)
     }
 
     companion object {
