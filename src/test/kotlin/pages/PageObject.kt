@@ -2,6 +2,7 @@ package pages
 
 import app.App
 import app.Configuration
+import app.PlatformProperty
 import io.appium.java_client.AppiumDriver
 import io.appium.java_client.MobileElement
 import org.openqa.selenium.By
@@ -33,45 +34,99 @@ open class PageObject(val app: App) {
     }
 
     /**
-     * Looking for an element with locator [by].
+     * Looking for an element with locator [byPlatformProperty].
      *
-     * @param by - element locator
+     * @param byPlatformProperty - element locator
      * @param timeout - max awaiting timeout
      * @param interval - checking interval
+     * @param consumer - element handler
      *
      * @exception org.openqa.selenium.TimeoutException if element not found for [timeout]
-     * @return found element
+     * @return self-reference
      */
     fun waitForElement(
-        by: By,
+        byPlatformProperty: PlatformProperty<By>,
         timeout: Long = elementPollingTimeout,
-        interval: Long = elementPollingInterval
-    ): MobileElement {
-        return waitDriver
+        interval: Long = elementPollingInterval,
+        consumer: (MobileElement) -> Unit
+    ): PageObject {
+        val by = byPlatformProperty.getValue()
+        val mobileElement = waitDriver
             .withTimeout(Duration.ofMillis(timeout))
             .pollingEvery(Duration.ofMillis(interval))
             .until(ExpectedConditions.visibilityOfElementLocated(by)) as MobileElement
+        consumer(mobileElement)
+        return this
     }
 
     /**
-     * Looking for an element with locator [by].
+     * Looking for an element with locator [byPlatformProperty].
      * In case if element found invoke [org.openqa.selenium.remote.RemoteWebElement.click].
      *
-     * @param by - element locator
+     * @param byPlatformProperty - element locator
      * @param timeout - max awaiting timeout
      * @param interval - checking interval
      *
      * @exception org.openqa.selenium.TimeoutException if element not found for [timeout]
-     * @return found element
+     * @return self-reference
      */
     fun waitForElementAndClick(
-        by: By,
+        byPlatformProperty: PlatformProperty<By>,
         timeout: Long = elementPollingTimeout,
         interval: Long = elementPollingInterval
-    ): MobileElement {
-        val mobileElement = waitForElement(by, timeout, interval)
-        mobileElement.click()
-        return mobileElement
+    ): PageObject {
+        return waitForElement(byPlatformProperty, timeout, interval) {
+            it.click()
+        }
+    }
+
+    /**
+     * Looking for an element with locator [byPlatformProperty].
+     * In case if element found invoke [org.openqa.selenium.remote.RemoteWebElement.getText] will be returned.
+     *
+     * @param byPlatformProperty - element locator
+     * @param timeout - max awaiting timeout
+     * @param interval - checking interval
+     * @param consumer - text handler
+     *
+     * @exception org.openqa.selenium.TimeoutException if element not found for [timeout]
+     * @return self-reference
+     */
+    fun waitForElementAndGetText(
+        byPlatformProperty: PlatformProperty<By>,
+        timeout: Long = elementPollingTimeout,
+        interval: Long = elementPollingInterval,
+        consumer: (String) -> Unit
+    ): PageObject {
+        return waitForElement(byPlatformProperty, timeout, interval) {
+            consumer(it.text)
+        }
+    }
+
+    /**
+     * Looking for an element with locator [byPlatformProperty].
+     * In case if element found invoke [org.openqa.selenium.remote.RemoteWebElement.getAttribute] will be returned.
+     *
+     * @param byPlatformProperty - element locator
+     * @param attributePlatformProperty - attribute key value
+     * @param timeout - max awaiting timeout
+     * @param interval - checking interval
+     * @param consumer - text handler
+     *
+     * @exception org.openqa.selenium.TimeoutException if element not found for [timeout]
+     * @return self-reference
+     */
+    fun waitForElementAndGetAttribute(
+        byPlatformProperty: PlatformProperty<By>,
+        attributePlatformProperty: PlatformProperty<String>,
+        timeout: Long = elementPollingTimeout,
+        interval: Long = elementPollingInterval,
+        consumer: (String) -> Unit
+    ): PageObject {
+        val attributeKey = attributePlatformProperty.getValue()
+        return waitForElement(byPlatformProperty, timeout, interval) {
+            consumer(it.getAttribute(attributeKey))
+        }
     }
 
 }

@@ -5,54 +5,57 @@ import app.AppLauncher
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import pages.PageObject
 import uitests.ui.IntroductionPage
 import uitests.ui.LandingPage
 import uitests.ui.PlusAdsPage
-import kotlin.test.assertNotNull
+import uitests.ui.UIAttributes
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class MainScreenTest {
 
     @Test
     fun checkOpenApp() {
-        val landingPage = LandingPage(app)
-
-        assertTrue { landingPage.topNavigation.isMyCinemaActive() }
-        assertTrue { landingPage.bottomNavigation.isHDActive() }
-
-        assertNotNull(landingPage.ads1stLineElement)
-        assertTrue { landingPage.ads1stLineElement.isDisplayed }
-
-        assertNotNull(landingPage.ads2ndLineElement)
-        assertTrue { landingPage.ads2ndLineElement.isDisplayed }
-
-        assertNotNull(landingPage.tryFreeButton)
-        assertTrue { landingPage.tryFreeButton.isDisplayed }
-
-        assertNotNull(landingPage.infoBlockElement)
-        assertTrue { landingPage.infoBlockElement.isDisplayed }
+        pageObject
+            .waitForElementAndGetAttribute(LandingPage.TopNavigation.myCinemaLocation, UIAttributes.focused, 30000) {
+                assertEquals("true", it)
+            }
+            .waitForElementAndGetAttribute(LandingPage.BottomNavigation.hdLocation, UIAttributes.selected) {
+                assertEquals("true", it)
+            }
+            .waitForElement(LandingPage.ads1stLineLocation) {
+                assertTrue { it.isDisplayed }
+            }
+            .waitForElement(LandingPage.ads2ndLineLocation) {
+                assertTrue { it.isDisplayed }
+            }
+            .waitForElement(LandingPage.tryFreeButtonLocation) {
+                assertTrue { it.isDisplayed }
+            }
+            .waitForElement(LandingPage.infoBlockLocation) {
+                assertTrue { it.isDisplayed }
+            }
     }
 
     companion object {
         private lateinit var app: App
+        private lateinit var pageObject: PageObject
 
         @JvmStatic
         @BeforeAll
         fun setUp() {
             app = AppLauncher().launch()
+            pageObject = PageObject(app)
 
             skipIntroductionPages()
         }
 
         private fun skipIntroductionPages() {
-            val introductionPage = IntroductionPage(app)
-            introductionPage.clickNext()
-
-            introductionPage.reload()
-            introductionPage.clickNext()
-
-            val plusAdsPage = PlusAdsPage(app)
-            plusAdsPage.clickSkip()
+            pageObject
+                .waitForElementAndClick(IntroductionPage.nextButtonLocation)
+                .waitForElementAndClick(IntroductionPage.nextButtonLocation)
+                .waitForElementAndClick(PlusAdsPage.skipButtonLocation)
         }
 
         @JvmStatic
