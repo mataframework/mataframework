@@ -1,40 +1,18 @@
 package uitests.ui
 
-import app.App
-import io.appium.java_client.MobileElement
+import app.PlatformProperty
 import org.openqa.selenium.By
-import pages.PageObject
 
-class IntroductionPage(app: App) : PageObject(app) {
+object IntroductionPage {
 
-    private val descriptionLocation: By = by(
-            By.id("ru.kinopoisk:id/description"),
-            By.xpath("") //TODO: fill for iOS
+    val descriptionLocation: PlatformProperty<By> = PlatformProperty(
+        By.id("ru.kinopoisk:id/description"),
+        By.xpath("") //TODO: fill for iOS
     )
 
-    private val nextButtonLocation: By = by(
-            By.id("ru.kinopoisk:id/button_next"),
-            By.xpath("") //TODO: fill for iOS
+    val nextButtonLocation: PlatformProperty<By> = PlatformProperty(
+        By.id("ru.kinopoisk:id/button_next"),
+        By.xpath("") //TODO: fill for iOS
     )
-
-    private lateinit var descriptionElement: MobileElement
-    private lateinit var nextButtonElement: MobileElement
-
-    init {
-        reload()
-    }
-
-    fun reload() {
-        descriptionElement = waitForElement(descriptionLocation, 30000)
-        nextButtonElement = waitForElement(nextButtonLocation)
-    }
-
-    fun clickNext() {
-        nextButtonElement.click()
-    }
-
-    fun getDescription() : String {
-        return descriptionElement.text
-    }
 
 }
