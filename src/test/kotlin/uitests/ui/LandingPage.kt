@@ -68,6 +68,11 @@ object LandingPage {
             By.id("ru.kinopoisk:id/afisha"),
             By.xpath("") //TODO: fill for iOS
         )
+
+        val searchLocation: PlatformProperty<By> = PlatformProperty(
+            By.id("ru.kinopoisk:id/search"),
+            By.xpath("") //TODO: fill for iOS
+        )
     }
 
 }
