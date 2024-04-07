@@ -48,6 +48,8 @@ open class PageObject(val app: App) {
      * @param byPlatformProperty - element locator
      * @param timeout - max awaiting timeout
      * @param interval - checking interval
+     * @param scrollScreen - scrolling policy for element searching
+     * @param fitRequired - if true, element will be fit to center of screen
      * @param consumer - element handler
      *
      * @exception org.openqa.selenium.TimeoutException if element not found for [timeout]
@@ -58,10 +60,14 @@ open class PageObject(val app: App) {
             timeout: Long = elementPollingTimeout,
             interval: Long = elementPollingInterval,
             scrollScreen: ScrollScreen = noScroll,
+            fitRequired: Boolean = false,
             consumer: (MobileElement) -> Unit = noop
     ): PageObject {
         val by = byPlatformProperty.getValue()
         val mobileElement = lookupElement(by, timeout, interval, scrollScreen)
+        if(fitRequired) {
+            fitElement(mobileElement)
+        }
         consumer(mobileElement)
         return this
     }
@@ -271,5 +277,21 @@ open class PageObject(val app: App) {
             }
         }
         throw RuntimeException("Retry exceeds")
+    }
+
+    private fun fitElement(mobileElement: MobileElement) {
+        val windowSize = driver!!.manage().window().size
+        val windowHeight = windowSize.height
+        val startX = windowSize.width / 2
+        val startY = windowHeight / 2
+
+        val elementLocation = mobileElement.location.y
+        val exceptedElementLocation = startY - mobileElement.size.height / 2
+
+        if(exceptedElementLocation > elementLocation) {
+            scroll(startX, startY, ScrollDirection.UP, exceptedElementLocation - elementLocation)
+        } else {
+            scroll(startX, startY, ScrollDirection.DOWN, elementLocation - exceptedElementLocation)
+        }
     }
 }

@@ -21,7 +21,12 @@ class MediaScreenTest {
                 .waitForElementAndClick(LandingPage.BottomNavigation.mediaLocation, 30000)
                 .waitForElementAndScroll(MediaPage.soonFilmsCarouselElement, ScrollDirection.DOWN, 100)
                 .waitForElementAndScroll(MediaPage.soonFilmsCarouselElement, ScrollDirection.RIGHT, 100)
-                .waitForElement(MediaPage.trailersCarouselElement, scrollScreen = ScrollScreen(ScrollDirection.DOWN, 200, 10))
+                .waitForElement(
+                        MediaPage.trailersCarouselElement,
+                        scrollScreen = ScrollScreen(ScrollDirection.DOWN, 200, 10),
+                        fitRequired = true
+                )
+                .waitForElementAndScroll(MediaPage.soonFilmsCarouselElement, ScrollDirection.RIGHT, 100)
     }
 
     companion object {
