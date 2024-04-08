@@ -46,16 +46,16 @@ open class PageObject(val app: App) {
      * @return self-reference
      */
     fun waitForElement(
-        byPlatformProperty: PlatformProperty<By>,
-        timeout: Long = elementPollingTimeout,
-        interval: Long = elementPollingInterval,
-        consumer: (MobileElement) -> Unit = noop
+            byPlatformProperty: PlatformProperty<By>,
+            timeout: Long = elementPollingTimeout,
+            interval: Long = elementPollingInterval,
+            consumer: (MobileElement) -> Unit = noop
     ): PageObject {
         val by = byPlatformProperty.getValue()
         val mobileElement = waitDriver
-            .withTimeout(Duration.ofMillis(timeout))
-            .pollingEvery(Duration.ofMillis(interval))
-            .until(ExpectedConditions.visibilityOfElementLocated(by)) as MobileElement
+                .withTimeout(Duration.ofMillis(timeout))
+                .pollingEvery(Duration.ofMillis(interval))
+                .until(ExpectedConditions.visibilityOfElementLocated(by)) as MobileElement
         consumer(mobileElement)
         return this
     }
@@ -72,9 +72,9 @@ open class PageObject(val app: App) {
      * @return self-reference
      */
     fun waitForElementAndClick(
-        byPlatformProperty: PlatformProperty<By>,
-        timeout: Long = elementPollingTimeout,
-        interval: Long = elementPollingInterval
+            byPlatformProperty: PlatformProperty<By>,
+            timeout: Long = elementPollingTimeout,
+            interval: Long = elementPollingInterval
     ): PageObject {
         return waitForElement(byPlatformProperty, timeout, interval) {
             it.click()
@@ -94,10 +94,10 @@ open class PageObject(val app: App) {
      * @return self-reference
      */
     fun waitForElementAndGetText(
-        byPlatformProperty: PlatformProperty<By>,
-        timeout: Long = elementPollingTimeout,
-        interval: Long = elementPollingInterval,
-        consumer: (String) -> Unit
+            byPlatformProperty: PlatformProperty<By>,
+            timeout: Long = elementPollingTimeout,
+            interval: Long = elementPollingInterval,
+            consumer: (String) -> Unit
     ): PageObject {
         return waitForElement(byPlatformProperty, timeout, interval) {
             consumer(it.text)
@@ -118,15 +118,45 @@ open class PageObject(val app: App) {
      * @return self-reference
      */
     fun waitForElementAndGetAttribute(
-        byPlatformProperty: PlatformProperty<By>,
-        attributePlatformProperty: PlatformProperty<String>,
-        timeout: Long = elementPollingTimeout,
-        interval: Long = elementPollingInterval,
-        consumer: (String) -> Unit
+            byPlatformProperty: PlatformProperty<By>,
+            attributePlatformProperty: PlatformProperty<String>,
+            timeout: Long = elementPollingTimeout,
+            interval: Long = elementPollingInterval,
+            consumer: (String) -> Unit
     ): PageObject {
         val attributeKey = attributePlatformProperty.getValue()
         return waitForElement(byPlatformProperty, timeout, interval) {
             consumer(it.getAttribute(attributeKey))
+        }
+    }
+
+    /**
+     * Looking for an element with locator [byPlatformProperty].
+     * In case if element found:
+     * 1. and [click] passed true invoke [org.openqa.selenium.remote.RemoteWebElement.click].
+     * 2. invoke [io.appium.java_client.MobileElement.setValue] and pass [input].
+     *
+     * @param byPlatformProperty - element locator
+     * @param input - data to input
+     * @param click - true to click, false to not click
+     * @param timeout - max awaiting timeout
+     * @param interval - checking interval
+     *
+     * @exception org.openqa.selenium.TimeoutException if element not found for [timeout]
+     * @return self-reference
+     */
+    fun waitForElementAndInput(
+            byPlatformProperty: PlatformProperty<By>,
+            input: String,
+            click: Boolean = true,
+            timeout: Long = elementPollingTimeout,
+            interval: Long = elementPollingInterval
+    ): PageObject {
+        return waitForElement(byPlatformProperty, timeout, interval) {
+            if(click) {
+                it.click()
+            }
+            it.sendKeys(input)
         }
     }
 
