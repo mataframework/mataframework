@@ -132,34 +132,13 @@ open class PageObject(val app: App) {
 
     /**
      * Looking for an element with locator [byPlatformProperty].
-     * In case if element found invoke [io.appium.java_client.MobileElement.setValue] and pass [input].
+     * In case if element found:
+     * 1. and [click] passed true invoke [org.openqa.selenium.remote.RemoteWebElement.click].
+     * 2. invoke [io.appium.java_client.MobileElement.setValue] and pass [input].
      *
      * @param byPlatformProperty - element locator
      * @param input - data to input
-     * @param timeout - max awaiting timeout
-     * @param interval - checking interval
-     *
-     * @exception org.openqa.selenium.TimeoutException if element not found for [timeout]
-     * @return self-reference
-     */
-    fun waitForElementAndClickAndInput(
-            byPlatformProperty: PlatformProperty<By>,
-            input: String,
-            timeout: Long = elementPollingTimeout,
-            interval: Long = elementPollingInterval
-    ): PageObject {
-        return waitForElement(byPlatformProperty, timeout, interval) {
-            it.click()
-            it.sendKeys(input)
-        }
-    }
-
-    /**
-     * Looking for an element with locator [byPlatformProperty].
-     * In case if element found invoke [io.appium.java_client.MobileElement.setValue] and pass [input].
-     *
-     * @param byPlatformProperty - element locator
-     * @param input - data to input
+     * @param click - true to click, false to not click
      * @param timeout - max awaiting timeout
      * @param interval - checking interval
      *
@@ -169,10 +148,14 @@ open class PageObject(val app: App) {
     fun waitForElementAndInput(
             byPlatformProperty: PlatformProperty<By>,
             input: String,
+            click: Boolean = true,
             timeout: Long = elementPollingTimeout,
             interval: Long = elementPollingInterval
     ): PageObject {
         return waitForElement(byPlatformProperty, timeout, interval) {
+            if(click) {
+                it.click()
+            }
             it.sendKeys(input)
         }
     }
