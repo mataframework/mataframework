@@ -17,7 +17,7 @@ class SearchScreenTest {
     fun checkOpenApp() {
         pageObject
             .waitForElementAndClick(LandingPage.BottomNavigation.searchLocation, 30000)
-            .waitForElementAndClickAndInput(SearchPage.editTextElement, "Форест Гамп")
+            .waitForElementAndInput(SearchPage.editTextElement, "Форест Гамп")
             .waitForElement(SearchPage.SearchResultSection.allResultsElement, 30000)
             .waitForElement(SearchPage.SearchResultSection.suggestsElement)
             .waitForElement(SearchPage.SearchResultSection.toResultsElement)
