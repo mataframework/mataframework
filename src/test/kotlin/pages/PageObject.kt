@@ -11,8 +11,8 @@ import org.openqa.selenium.interactions.PointerInput
 import org.openqa.selenium.interactions.Sequence
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
+import pages.scroll.ScrollAction
 import pages.scroll.ScrollDirection
-import pages.scroll.ScrollScreen
 import java.lang.reflect.Type
 import java.time.Duration
 
@@ -21,7 +21,7 @@ open class PageObject(val app: App) {
     private val elementPollingTimeout = Configuration.getElementPollingTimeout()
     private val elementPollingInterval = Configuration.getElementPollingInterval()
     private val noop = { _: MobileElement -> }
-    private val noScroll = ScrollScreen(ScrollDirection.DOWN, 0, 0)
+    private val noScroll = ScrollAction(0, scrollTimes = 0)
 
     protected val driver: AppiumDriver<MobileElement>? = app.driver
     protected val waitDriver = WebDriverWait(driver, elementPollingTimeout, elementPollingInterval)
@@ -48,7 +48,7 @@ open class PageObject(val app: App) {
      * @param byPlatformProperty - element locator
      * @param timeout - max awaiting timeout
      * @param interval - checking interval
-     * @param scrollScreen - scrolling policy for element searching
+     * @param scrollAction - scrolling policy for element searching
      * @param fitRequired - if true, element will be fit to center of screen
      * @param consumer - element handler
      *
@@ -59,13 +59,13 @@ open class PageObject(val app: App) {
             byPlatformProperty: PlatformProperty<By>,
             timeout: Long = elementPollingTimeout,
             interval: Long = elementPollingInterval,
-            scrollScreen: ScrollScreen = noScroll,
+            scrollAction: ScrollAction = noScroll,
             fitRequired: Boolean = false,
             consumer: (MobileElement) -> Unit = noop
     ): PageObject {
         val by = byPlatformProperty.getValue()
-        val mobileElement = lookupElement(by, timeout, interval, scrollScreen)
-        if(fitRequired) {
+        val mobileElement = lookupElement(by, timeout, interval, scrollAction)
+        if (fitRequired) {
             fitElement(mobileElement)
         }
         consumer(mobileElement)
@@ -165,7 +165,7 @@ open class PageObject(val app: App) {
             interval: Long = elementPollingInterval
     ): PageObject {
         return waitForElement(byPlatformProperty, timeout, interval) {
-            if(click) {
+            if (click) {
                 it.click()
             }
             it.sendKeys(input)
@@ -174,8 +174,7 @@ open class PageObject(val app: App) {
 
     fun waitForElementAndScroll(
             byPlatformProperty: PlatformProperty<By>,
-            scrollDirection: ScrollDirection,
-            times: Int,
+            scrollAction: ScrollAction,
             timeout: Long = elementPollingTimeout,
             interval: Long = elementPollingInterval
     ): PageObject {
@@ -184,63 +183,60 @@ open class PageObject(val app: App) {
             val x = location.x
             val y = location.y
 
-            scroll(x, y, scrollDirection, times)
+            scroll(x, y, scrollAction)
         }
     }
 
     private fun scroll(x: Int,
                        y: Int,
-                       scrollDirection: ScrollDirection,
-                       scrollAmount: Int,
-                       timeout: Duration = Duration.ofMillis(600)) {
-        val scroll = Sequence(finger, 0)
+                       scrollAction: ScrollAction) {
         val viewport = PointerInput.Origin.viewport()
+        val scrollAmount = scrollAction.scrollAmount
+        val timeout = scrollAction.scrollDuration
 
-        scroll.addAction(finger.createPointerMove(Duration.ZERO, viewport, x, y))
-        scroll.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
-        when (scrollDirection) {
-            ScrollDirection.UP -> {
-                scroll.addAction(finger.createPointerMove(timeout, viewport, x, y + scrollAmount))
-            }
+        for (i in 1..scrollAction.scrollTimes) {
+            val scroll = Sequence(finger, 0)
+            scroll.addAction(finger.createPointerMove(Duration.ZERO, viewport, x, y))
+            scroll.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
+            when (scrollAction.scrollDirection) {
+                ScrollDirection.UP -> {
+                    scroll.addAction(finger.createPointerMove(timeout, viewport, x, y + scrollAmount))
+                }
 
-            ScrollDirection.DOWN -> {
-                scroll.addAction(finger.createPointerMove(timeout, viewport, x, y - scrollAmount))
-            }
+                ScrollDirection.DOWN -> {
+                    scroll.addAction(finger.createPointerMove(timeout, viewport, x, y - scrollAmount))
+                }
 
-            ScrollDirection.LEFT -> {
-                scroll.addAction(finger.createPointerMove(timeout, viewport, x + scrollAmount, y))
-            }
+                ScrollDirection.LEFT -> {
+                    scroll.addAction(finger.createPointerMove(timeout, viewport, x + scrollAmount, y))
+                }
 
-            ScrollDirection.RIGHT -> {
-                scroll.addAction(finger.createPointerMove(timeout, viewport, x - scrollAmount, y))
+                ScrollDirection.RIGHT -> {
+                    scroll.addAction(finger.createPointerMove(timeout, viewport, x - scrollAmount, y))
+                }
             }
+            scroll.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()))
+            driver?.perform(listOf(scroll))
         }
-        scroll.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()))
-        driver?.perform(listOf(scroll))
     }
 
     private fun lookupElement(by: By,
                               timeout: Long,
                               interval: Long,
-                              scrollScreen: ScrollScreen): MobileElement {
-        val scrollTimes = scrollScreen.scrollTimes
-        val lookingTimeout = Duration.ofMillis(timeout)
-        val lookingInterval = Duration.ofMillis(interval)
-        try {
-            return waitDriver
-                    .withTimeout(lookingTimeout)
-                    .pollingEvery(lookingInterval)
-                    .until(ExpectedConditions.visibilityOfElementLocated(by)) as MobileElement
-        } catch (e: TimeoutException) {
-            if(scrollTimes <= 1) {
-                throw e
-            }
-        }
+                              scrollAction: ScrollAction): MobileElement {
         val windowSize = driver!!.manage().window().size
         val startX = windowSize.getWidth() / 2
         val startY = windowSize.getHeight() / 2
-        return retry(scrollTimes - 1, listOf(TimeoutException::class.java)) {
-            scroll(startX, startY, scrollScreen.scrollDirection, scrollScreen.scrollAmount)
+        val scrollItem = ScrollAction(scrollAction.scrollAmount, scrollAction.scrollDirection, 1, scrollAction.scrollDuration)
+        val exceptionHandlers: Map<Type, () -> Unit> = mapOf(
+                Pair(TimeoutException::class.java) {
+                    scroll(startX, startY, scrollItem)
+                }
+        )
+        val scrollTimes = scrollAction.scrollTimes
+        val lookingTimeout = Duration.ofMillis(timeout)
+        val lookingInterval = Duration.ofMillis(interval)
+        return retry(scrollTimes + 1, exceptionHandlers) {
             waitDriver
                     .withTimeout(lookingTimeout)
                     .pollingEvery(lookingInterval)
@@ -248,12 +244,14 @@ open class PageObject(val app: App) {
         }
     }
 
-    private fun <T> retry(times: Int, exceptions: List<Type>, block: () -> T): T {
+    private fun <T> retry(times: Int, exceptionHandlers: Map<Type, () -> Unit>, block: () -> T): T {
         for (i in 1..times) {
             try {
                 return block()
             } catch (e: Exception) {
-                if (i != times && exceptions.contains(e::class.java)) {
+                val exceptionHandler = exceptionHandlers[e::class.java]
+                if (i != times && exceptionHandler != null) {
+                    exceptionHandler()
                     continue
                 }
                 throw e
@@ -271,10 +269,11 @@ open class PageObject(val app: App) {
         val elementLocation = mobileElement.location.y
         val exceptedElementLocation = startY - mobileElement.size.height / 2
 
-        if(exceptedElementLocation > elementLocation) {
-            scroll(startX, startY, ScrollDirection.UP, exceptedElementLocation - elementLocation)
+        val scrollAction = if (exceptedElementLocation > elementLocation) {
+            ScrollAction(exceptedElementLocation - elementLocation, ScrollDirection.UP)
         } else {
-            scroll(startX, startY, ScrollDirection.DOWN, elementLocation - exceptedElementLocation)
+            ScrollAction(elementLocation - exceptedElementLocation)
         }
+        scroll(startX, startY, scrollAction)
     }
 }

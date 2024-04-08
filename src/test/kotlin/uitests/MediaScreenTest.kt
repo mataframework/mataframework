@@ -6,8 +6,8 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import pages.PageObject
+import pages.scroll.ScrollAction
 import pages.scroll.ScrollDirection
-import pages.scroll.ScrollScreen
 import uitests.ui.IntroductionPage
 import uitests.ui.LandingPage
 import uitests.ui.MediaPage
@@ -19,14 +19,20 @@ class MediaScreenTest {
     fun checkOpenApp() {
         pageObject
                 .waitForElementAndClick(LandingPage.BottomNavigation.mediaLocation, 30000)
-                .waitForElementAndScroll(MediaPage.soonFilmsCarouselElement, ScrollDirection.DOWN, 100)
-                .waitForElementAndScroll(MediaPage.soonFilmsCarouselElement, ScrollDirection.RIGHT, 100)
+                .waitForElementAndScroll(MediaPage.soonFilmsCarouselElement, ScrollAction(100))
+                .waitForElementAndScroll(
+                        MediaPage.soonFilmsCarouselElement,
+                        ScrollAction(100, ScrollDirection.RIGHT)
+                )
                 .waitForElement(
                         MediaPage.trailersCarouselElement,
-                        scrollScreen = ScrollScreen(ScrollDirection.DOWN, 200, 10),
+                        scrollAction = ScrollAction(100, scrollTimes = 10),
                         fitRequired = true
                 )
-                .waitForElementAndScroll(MediaPage.soonFilmsCarouselElement, ScrollDirection.RIGHT, 100)
+                .waitForElementAndScroll(
+                        MediaPage.trailersCarouselElement,
+                        ScrollAction(100, ScrollDirection.RIGHT)
+                )
     }
 
     companion object {
