@@ -56,12 +56,12 @@ open class PageObject(val app: App) {
      * @return self-reference
      */
     fun waitForElement(
-            byPlatformProperty: PlatformProperty<By>,
-            timeout: Long = elementPollingTimeout,
-            interval: Long = elementPollingInterval,
-            scrollAction: ScrollAction = noScroll,
-            fitRequired: Boolean = false,
-            consumer: (MobileElement) -> Unit = noop
+        byPlatformProperty: PlatformProperty<By>,
+        timeout: Long = elementPollingTimeout,
+        interval: Long = elementPollingInterval,
+        scrollAction: ScrollAction = noScroll,
+        fitRequired: Boolean = false,
+        consumer: (MobileElement) -> Unit = noop
     ): PageObject {
         val by = byPlatformProperty.getValue()
         val mobileElement = lookupElement(by, timeout, interval, scrollAction)
@@ -79,16 +79,20 @@ open class PageObject(val app: App) {
      * @param byPlatformProperty - element locator
      * @param timeout - max awaiting timeout
      * @param interval - checking interval
+     * @param scrollAction - scrolling policy for element searching
+     * @param fitRequired - if true, element will be fit to center of screen
      *
      * @exception org.openqa.selenium.TimeoutException if element not found for [timeout]
      * @return self-reference
      */
     fun waitForElementAndClick(
-            byPlatformProperty: PlatformProperty<By>,
-            timeout: Long = elementPollingTimeout,
-            interval: Long = elementPollingInterval
+        byPlatformProperty: PlatformProperty<By>,
+        timeout: Long = elementPollingTimeout,
+        interval: Long = elementPollingInterval,
+        scrollAction: ScrollAction = noScroll,
+        fitRequired: Boolean = false
     ): PageObject {
-        return waitForElement(byPlatformProperty, timeout, interval) {
+        return waitForElement(byPlatformProperty, timeout, interval, scrollAction, fitRequired) {
             it.click()
         }
     }
@@ -101,17 +105,21 @@ open class PageObject(val app: App) {
      * @param timeout - max awaiting timeout
      * @param interval - checking interval
      * @param consumer - text handler
+     * @param scrollAction - scrolling policy for element searching
+     * @param fitRequired - if true, element will be fit to center of screen
      *
      * @exception org.openqa.selenium.TimeoutException if element not found for [timeout]
      * @return self-reference
      */
     fun waitForElementAndGetText(
-            byPlatformProperty: PlatformProperty<By>,
-            timeout: Long = elementPollingTimeout,
-            interval: Long = elementPollingInterval,
-            consumer: (String) -> Unit
+        byPlatformProperty: PlatformProperty<By>,
+        timeout: Long = elementPollingTimeout,
+        interval: Long = elementPollingInterval,
+        scrollAction: ScrollAction = noScroll,
+        fitRequired: Boolean = false,
+        consumer: (String) -> Unit
     ): PageObject {
-        return waitForElement(byPlatformProperty, timeout, interval) {
+        return waitForElement(byPlatformProperty, timeout, interval, scrollAction, fitRequired) {
             consumer(it.text)
         }
     }
@@ -124,20 +132,24 @@ open class PageObject(val app: App) {
      * @param attributePlatformProperty - attribute key value
      * @param timeout - max awaiting timeout
      * @param interval - checking interval
+     * @param scrollAction - scrolling policy for element searching
+     * @param fitRequired - if true, element will be fit to center of screen
      * @param consumer - text handler
      *
      * @exception org.openqa.selenium.TimeoutException if element not found for [timeout]
      * @return self-reference
      */
     fun waitForElementAndGetAttribute(
-            byPlatformProperty: PlatformProperty<By>,
-            attributePlatformProperty: PlatformProperty<String>,
-            timeout: Long = elementPollingTimeout,
-            interval: Long = elementPollingInterval,
-            consumer: (String) -> Unit
+        byPlatformProperty: PlatformProperty<By>,
+        attributePlatformProperty: PlatformProperty<String>,
+        timeout: Long = elementPollingTimeout,
+        interval: Long = elementPollingInterval,
+        scrollAction: ScrollAction = noScroll,
+        fitRequired: Boolean = false,
+        consumer: (String) -> Unit
     ): PageObject {
         val attributeKey = attributePlatformProperty.getValue()
-        return waitForElement(byPlatformProperty, timeout, interval) {
+        return waitForElement(byPlatformProperty, timeout, interval, scrollAction, fitRequired) {
             consumer(it.getAttribute(attributeKey))
         }
     }
@@ -153,18 +165,22 @@ open class PageObject(val app: App) {
      * @param click - true to click, false to not click
      * @param timeout - max awaiting timeout
      * @param interval - checking interval
+     * @param scrollAction - scrolling policy for element searching
+     * @param fitRequired - if true, element will be fit to center of screen
      *
      * @exception org.openqa.selenium.TimeoutException if element not found for [timeout]
      * @return self-reference
      */
     fun waitForElementAndInput(
-            byPlatformProperty: PlatformProperty<By>,
-            input: String,
-            click: Boolean = true,
-            timeout: Long = elementPollingTimeout,
-            interval: Long = elementPollingInterval
+        byPlatformProperty: PlatformProperty<By>,
+        input: String,
+        click: Boolean = true,
+        timeout: Long = elementPollingTimeout,
+        interval: Long = elementPollingInterval,
+        scrollAction: ScrollAction = noScroll,
+        fitRequired: Boolean = false
     ): PageObject {
-        return waitForElement(byPlatformProperty, timeout, interval) {
+        return waitForElement(byPlatformProperty, timeout, interval, scrollAction, fitRequired) {
             if (click) {
                 it.click()
             }
@@ -172,24 +188,42 @@ open class PageObject(val app: App) {
         }
     }
 
+    /**
+     * Looking for an element with locator [byPlatformProperty].
+     * In case if element found invoke scroll using [elementScrollAction] policy.
+     *
+     * @param byPlatformProperty - element locator
+     * @param elementScrollAction - element scrolling policy
+     * @param timeout - max awaiting timeout
+     * @param interval - checking interval
+     * @param scrollAction - scrolling policy for element searching
+     * @param fitRequired - if true, element will be fit to center of screen
+     *
+     * @exception org.openqa.selenium.TimeoutException if element not found for [timeout]
+     * @return self-reference
+     */
     fun waitForElementAndScroll(
-            byPlatformProperty: PlatformProperty<By>,
-            scrollAction: ScrollAction,
-            timeout: Long = elementPollingTimeout,
-            interval: Long = elementPollingInterval
+        byPlatformProperty: PlatformProperty<By>,
+        elementScrollAction: ScrollAction,
+        timeout: Long = elementPollingTimeout,
+        interval: Long = elementPollingInterval,
+        scrollAction: ScrollAction = noScroll,
+        fitRequired: Boolean = false
     ): PageObject {
-        return waitForElement(byPlatformProperty, timeout, interval) {
+        return waitForElement(byPlatformProperty, timeout, interval, scrollAction, fitRequired) {
             val location = it.location
             val x = location.x
             val y = location.y
 
-            scroll(x, y, scrollAction)
+            scroll(x, y, elementScrollAction)
         }
     }
 
-    private fun scroll(x: Int,
-                       y: Int,
-                       scrollAction: ScrollAction) {
+    private fun scroll(
+        x: Int,
+        y: Int,
+        scrollAction: ScrollAction
+    ) {
         val viewport = PointerInput.Origin.viewport()
         val scrollAmount = scrollAction.scrollAmount
         val timeout = scrollAction.scrollDuration
@@ -220,27 +254,30 @@ open class PageObject(val app: App) {
         }
     }
 
-    private fun lookupElement(by: By,
-                              timeout: Long,
-                              interval: Long,
-                              scrollAction: ScrollAction): MobileElement {
+    private fun lookupElement(
+        by: By,
+        timeout: Long,
+        interval: Long,
+        scrollAction: ScrollAction
+    ): MobileElement {
         val windowSize = driver!!.manage().window().size
         val startX = windowSize.getWidth() / 2
         val startY = windowSize.getHeight() / 2
-        val scrollItem = ScrollAction(scrollAction.scrollAmount, scrollAction.scrollDirection, 1, scrollAction.scrollDuration)
+        val scrollItem =
+            ScrollAction(scrollAction.scrollAmount, scrollAction.scrollDirection, 1, scrollAction.scrollDuration)
         val exceptionHandlers: Map<Type, () -> Unit> = mapOf(
-                Pair(TimeoutException::class.java) {
-                    scroll(startX, startY, scrollItem)
-                }
+            Pair(TimeoutException::class.java) {
+                scroll(startX, startY, scrollItem)
+            }
         )
         val scrollTimes = scrollAction.scrollTimes
         val lookingTimeout = Duration.ofMillis(timeout)
         val lookingInterval = Duration.ofMillis(interval)
         return retry(scrollTimes + 1, exceptionHandlers) {
             waitDriver
-                    .withTimeout(lookingTimeout)
-                    .pollingEvery(lookingInterval)
-                    .until(ExpectedConditions.visibilityOfElementLocated(by)) as MobileElement
+                .withTimeout(lookingTimeout)
+                .pollingEvery(lookingInterval)
+                .until(ExpectedConditions.visibilityOfElementLocated(by)) as MobileElement
         }
     }
 
