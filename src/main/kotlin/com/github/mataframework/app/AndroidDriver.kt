@@ -1,5 +1,6 @@
 package com.github.mataframework.app
 
+import com.github.mataframework.exception.MataFrameworkException
 import com.github.mataframework.utils.Constants
 import io.appium.java_client.AppiumDriver
 import io.appium.java_client.MobileElement
@@ -25,19 +26,19 @@ class AndroidDriver(private val autoLaunch: Boolean) {
                 println("Failed to init Android driver")
                 return getAndroidDriver(retryCount - 1)
             } else {
-                throw RuntimeException("Failed to init Android driver. Please check if an emulator is running", e)
+                throw MataFrameworkException("Failed to init Android driver. Please check if an emulator is running", e)
             }
         } catch (e: WebDriverException) {
-            throw RuntimeException("Failed to init Android driver. Please check if Appium is running", e)
+            throw MataFrameworkException("Failed to init Android driver. Please check if Appium is running", e)
         } catch (e: MalformedURLException) {
-            throw RuntimeException("Failed to init Android driver", e)
+            throw MataFrameworkException("Failed to init Android driver", e)
         }
     }
 
     fun getCapabilities(): DesiredCapabilities {
         val appFile = File(Constants.ANDROID_APP)
         if (!appFile.exists()) {
-            throw RuntimeException("No ${Constants.ANDROID_APP} at project root.\n" +
+            throw MataFrameworkException("No ${Constants.ANDROID_APP} at project root.\n" +
                     "Please build App for android, and copy APK to ${appFile.absolutePath}")
         }
         val capabilities = DesiredCapabilities()

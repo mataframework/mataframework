@@ -3,6 +3,7 @@ package com.github.mataframework.pages
 import com.github.mataframework.app.App
 import com.github.mataframework.app.Configuration
 import com.github.mataframework.app.PlatformProperty
+import com.github.mataframework.exception.MataFrameworkException
 import com.github.mataframework.pages.scroll.ScrollAction
 import com.github.mataframework.pages.scroll.ScrollDirection
 import io.appium.java_client.AppiumDriver
@@ -103,7 +104,7 @@ open class PageObject(val app: App) {
                 return this
             }
         }
-        throw RuntimeException("Element '$by' is not disappeared")
+        throw MataFrameworkException("Element '$by' is not disappeared")
     }
 
     /**
@@ -328,7 +329,7 @@ open class PageObject(val app: App) {
                 throw e
             }
         }
-        throw RuntimeException("Retry exceeds")
+        throw MataFrameworkException("Retry exceeds")
     }
 
     private fun fitElement(mobileElement: MobileElement) {
