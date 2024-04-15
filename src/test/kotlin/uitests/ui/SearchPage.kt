@@ -10,6 +10,11 @@ object SearchPage {
             By.xpath("") //TODO: fill for iOS
     )
 
+    val recommendedToLookTextElement: PlatformProperty<By> = PlatformProperty(
+            By.id("ru.kinopoisk:id/search_recycler_view"),
+            By.xpath("") //TODO: fill for iOS
+    )
+
     object SearchResultSection {
 
         val allResultsElement: PlatformProperty<By> = PlatformProperty(

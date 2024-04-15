@@ -18,6 +18,7 @@ class SearchScreenTest {
         pageObject
             .waitForElementAndClick(LandingPage.BottomNavigation.searchLocation, 30000)
             .waitForElementAndInput(SearchPage.editTextElement, "Форест Гамп")
+            .waitForElementDisappear(SearchPage.recommendedToLookTextElement)
             .waitForElement(SearchPage.SearchResultSection.allResultsElement, 30000)
             .waitForElement(SearchPage.SearchResultSection.suggestsElement)
             .waitForElement(SearchPage.SearchResultSection.toResultsElement)

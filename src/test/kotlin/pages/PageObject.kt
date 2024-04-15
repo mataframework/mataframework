@@ -15,6 +15,7 @@ import pages.scroll.ScrollAction
 import pages.scroll.ScrollDirection
 import java.lang.reflect.Type
 import java.time.Duration
+import java.util.concurrent.TimeUnit
 
 open class PageObject(val app: App) {
 
@@ -70,6 +71,39 @@ open class PageObject(val app: App) {
         }
         consumer(mobileElement)
         return this
+    }
+
+    /**
+     * Looking for an element with locator [byPlatformProperty] until it disappears.
+     *
+     * @param byPlatformProperty - element locator
+     * @param attempts - amount of attempts to element looking
+     * @param sleepBetweenAttempts - sleep milliseconds between attempts
+     * @param timeout - max awaiting timeout
+     * @param interval - checking interval
+     *
+     * @exception org.openqa.selenium.TimeoutException if element not found for [timeout]
+     * @return self-reference
+     */
+    fun waitForElementDisappear(
+        byPlatformProperty: PlatformProperty<By>,
+        attempts: Int = 1,
+        sleepBetweenAttempts: Long = 500,
+        timeout: Long = elementPollingTimeout,
+        interval: Long = elementPollingInterval
+    ): PageObject {
+        val by = byPlatformProperty.getValue()
+        for (i in 1..attempts) {
+            try {
+                lookupElement(by, timeout, interval, noScroll)
+            } catch (e: TimeoutException) {
+                if (sleepBetweenAttempts > 0) {
+                    TimeUnit.MILLISECONDS.sleep(sleepBetweenAttempts)
+                }
+                return this
+            }
+        }
+        throw RuntimeException("Element '$by' is not disappeared")
     }
 
     /**
