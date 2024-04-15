@@ -1,13 +1,13 @@
 package uitests
 
-import app.App
-import app.AppLauncher
+import com.github.mataframework.app.App
+import com.github.mataframework.app.AppLauncher
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import pages.PageObject
-import pages.scroll.ScrollAction
-import pages.scroll.ScrollDirection
+import com.github.mataframework.pages.PageObject
+import com.github.mataframework.pages.scroll.ScrollAction
+import com.github.mataframework.pages.scroll.ScrollDirection
 import uitests.ui.IntroductionPage
 import uitests.ui.LandingPage
 import uitests.ui.MediaPage

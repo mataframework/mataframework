@@ -1,8 +1,10 @@
-package pages
+package com.github.mataframework.pages
 
-import app.App
-import app.Configuration
-import app.PlatformProperty
+import com.github.mataframework.app.App
+import com.github.mataframework.app.Configuration
+import com.github.mataframework.app.PlatformProperty
+import com.github.mataframework.pages.scroll.ScrollAction
+import com.github.mataframework.pages.scroll.ScrollDirection
 import io.appium.java_client.AppiumDriver
 import io.appium.java_client.MobileElement
 import org.openqa.selenium.By
@@ -11,8 +13,6 @@ import org.openqa.selenium.interactions.PointerInput
 import org.openqa.selenium.interactions.Sequence
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
-import pages.scroll.ScrollAction
-import pages.scroll.ScrollDirection
 import java.lang.reflect.Type
 import java.time.Duration
 import java.util.concurrent.TimeUnit

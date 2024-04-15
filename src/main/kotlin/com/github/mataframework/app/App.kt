@@ -1,4 +1,4 @@
-package app
+package com.github.mataframework.app
 
 import io.appium.java_client.AppiumDriver
 import io.appium.java_client.MobileElement

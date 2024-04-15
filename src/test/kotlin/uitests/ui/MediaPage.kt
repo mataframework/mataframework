@@ -1,6 +1,6 @@
 package uitests.ui
 
-import app.PlatformProperty
+import com.github.mataframework.app.PlatformProperty
 import org.openqa.selenium.By
 
 object MediaPage {

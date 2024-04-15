@@ -1,4 +1,4 @@
-package app
+package com.github.mataframework.app
 
 /**
  *

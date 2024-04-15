@@ -1,5 +1,6 @@
-package app
+package com.github.mataframework.app
 
+import com.github.mataframework.utils.Constants
 import io.appium.java_client.AppiumDriver
 import io.appium.java_client.MobileElement
 import io.appium.java_client.remote.AutomationName
@@ -8,7 +9,6 @@ import org.openqa.selenium.Platform
 import org.openqa.selenium.SessionNotCreatedException
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.remote.DesiredCapabilities
-import utils.Constants
 import java.io.File
 import java.net.MalformedURLException
 import java.net.URL
