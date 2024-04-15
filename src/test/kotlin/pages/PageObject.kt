@@ -73,6 +73,31 @@ open class PageObject(val app: App) {
     }
 
     /**
+     * Looking for an element with locator [byPlatformProperty] until it disappears.
+     *
+     * @param byPlatformProperty - element locator
+     * @param attempts - amount of attempts to element looking
+     * @param sleepBetweenAttempts - sleep milliseconds between attempts
+     * @param timeout - max awaiting timeout
+     * @param interval - checking interval
+     *
+     * @exception org.openqa.selenium.TimeoutException if element not found for [timeout]
+     * @return self-reference
+     */
+    fun waitForElementDisappear(
+        byPlatformProperty: PlatformProperty<By>,
+        timeout: Long = elementPollingTimeout,
+        interval: Long = elementPollingInterval
+    ): PageObject {
+        val by = byPlatformProperty.getValue()
+        waitDriver
+            .withTimeout(Duration.ofMillis(timeout))
+            .pollingEvery(Duration.ofMillis(interval))
+            .until(ExpectedConditions.invisibilityOfElementLocated(by))
+        return this
+    }
+
+    /**
      * Looking for an element with locator [byPlatformProperty].
      * In case if element found invoke [org.openqa.selenium.remote.RemoteWebElement.click].
      *
