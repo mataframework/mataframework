@@ -1,5 +1,6 @@
 package uitests
 
+import com.github.mataframework.junit.MataInject
 import com.github.mataframework.junit.MataTestSuitSpecification
 import com.github.mataframework.pages.PageObject
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -12,9 +13,11 @@ import kotlin.test.assertTrue
     beforeAllProcessors = [SkipLanding::class]
 )
 class MainScreenTest {
+    @MataInject
+    private lateinit var pageObject: PageObject
 
     @Test
-    fun checkOpenApp(pageObject: PageObject) {
+    fun checkOpenApp() {
         pageObject
             .waitForElement(LandingPage.TopNavigation.myCinemaLocation, 30000) {
                 assertEquals("true", it.getAttribute("focused"))

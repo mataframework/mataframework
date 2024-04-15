@@ -8,7 +8,7 @@ import uitests.ui.PlusAdsPage
 
 object SkipLanding : BeforeAllProcessor {
 
-    override fun prepare(app: App, pageObject: PageObject) {
+    override fun doBeforeAll(app: App, pageObject: PageObject) {
         pageObject
             .waitForElementAndClick(IntroductionPage.nextButtonLocation)
             .waitForElementAndClick(IntroductionPage.nextButtonLocation)

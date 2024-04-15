@@ -6,9 +6,14 @@ import kotlin.reflect.KClass
 /**
  * Annotation describe MATA test.
  */
-@ExtendWith(MataTestEngine::class, MataFrameworkParameterResolver::class)
+@ExtendWith(
+    MataTestEngine::class,
+    MataFrameworkFiledInjector::class,
+    MataFrameworkParameterResolver::class
+)
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
 annotation class MataTestSuitSpecification(
-    val beforeAllProcessors: Array<KClass<out BeforeAllProcessor>> = []
+    val beforeAllProcessors: Array<KClass<out BeforeAllProcessor>> = [],
+    val afterAllProcessors: Array<KClass<out AfterAllProcessor>> = []
 )

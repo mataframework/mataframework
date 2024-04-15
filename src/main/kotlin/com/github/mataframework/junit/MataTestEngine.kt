@@ -15,11 +15,11 @@ class MataTestEngine : BeforeAllCallback, AfterAllCallback {
     @Throws(Exception::class)
     override fun beforeAll(context: ExtensionContext) {
         val testClass = context.requiredTestClass
-        val mataTestSuitSpecification =
-            AnnotationSupport.findAnnotation(testClass, MataTestSuitSpecification::class.java)
-                .orElseThrow { MataFrameworkException("MataTestSuitSpecification annotation not found.") }
+        val mataSpecification = AnnotationSupport.findAnnotation(testClass, MataTestSuitSpecification::class.java)
+            .orElseThrow { MataFrameworkException("MataTestSuitSpecification annotation not found.") }
 
         val store = context.getStore(MATA_FRAMEWORK)
+        store.put(StorageKeys.MATA_SPECIFICATION, mataSpecification)
 
         val appLauncher = AppLauncher()
         val app = appLauncher.launch()
@@ -29,10 +29,27 @@ class MataTestEngine : BeforeAllCallback, AfterAllCallback {
         store.put(StorageKeys.APP, app)
         store.put(StorageKeys.PAGE_OBJECT, pageObject)
 
-        for (beforeAllProcessor in mataTestSuitSpecification.beforeAllProcessors) {
-            beforeAllProcessor.objectInstance?.prepare(app, pageObject)
+        for (beforeAllProcessor in mataSpecification.beforeAllProcessors) {
+            val processorInstance = beforeAllProcessor.objectInstance
+            processorInstance?.doBeforeAll(app, pageObject)
                 ?: throw MataFrameworkException("${beforeAllProcessor.qualifiedName} is not object.")
         }
+    }
+
+    override fun afterAll(context: ExtensionContext?) {
+        val store = context?.getStore(MATA_FRAMEWORK) ?: return
+
+        val app = store.get(StorageKeys.APP) as App?
+        val pageObject = store.get(StorageKeys.PAGE_OBJECT) as PageObject?
+
+        val mataSpecification = store.get(StorageKeys.MATA_SPECIFICATION) as MataTestSuitSpecification
+        for (afterAllProcessor in mataSpecification.afterAllProcessors) {
+            val processorInstance = afterAllProcessor.objectInstance
+            processorInstance?.doAfterAll(app, pageObject)
+                ?: throw MataFrameworkException("${afterAllProcessor.qualifiedName} is not object.")
+        }
+
+        app?.close()
     }
 
     companion object {
@@ -42,13 +59,9 @@ class MataTestEngine : BeforeAllCallback, AfterAllCallback {
         enum class StorageKeys {
             APP_LAUNCHER,
             APP,
-            PAGE_OBJECT
+            PAGE_OBJECT,
+            MATA_SPECIFICATION
         }
     }
 
-    override fun afterAll(context: ExtensionContext?) {
-        val store = context?.getStore(MATA_FRAMEWORK)
-        val app = store?.get(StorageKeys.APP) as App?
-        app?.close()
-    }
 }

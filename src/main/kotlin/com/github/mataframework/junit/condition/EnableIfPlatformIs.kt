@@ -4,7 +4,7 @@ import com.github.mataframework.app.Platform
 import org.junit.jupiter.api.extension.ExtendWith
 
 /**
- * Annotation allow mark tests as platform specified
+ * Mark-annotation for tests as a platform specified
  */
 @ExtendWith(PlatformExecutionCondition::class)
 @Retention(AnnotationRetention.RUNTIME)

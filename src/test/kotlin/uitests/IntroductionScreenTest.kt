@@ -1,5 +1,6 @@
 package uitests
 
+import com.github.mataframework.junit.MataInject
 import com.github.mataframework.junit.MataTestSuitSpecification
 import com.github.mataframework.pages.PageObject
 import org.junit.jupiter.api.Test
@@ -9,9 +10,11 @@ import kotlin.test.assertEquals
 
 @MataTestSuitSpecification
 class IntroductionScreenTest {
+    @MataInject
+    private lateinit var pageObject: PageObject
 
     @Test
-    fun checkIntroductionPages(pageObject: PageObject) {
+    fun checkIntroductionPages() {
         pageObject
             .waitForElementAndGetText(IntroductionPage.descriptionLocation, 30000) {
                 assertEquals("Смотрите тысячи\nфильмов\nи сериалов", it)
