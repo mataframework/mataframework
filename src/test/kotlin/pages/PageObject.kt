@@ -15,7 +15,6 @@ import pages.scroll.ScrollAction
 import pages.scroll.ScrollDirection
 import java.lang.reflect.Type
 import java.time.Duration
-import java.util.concurrent.TimeUnit
 
 open class PageObject(val app: App) {
 
@@ -87,23 +86,15 @@ open class PageObject(val app: App) {
      */
     fun waitForElementDisappear(
         byPlatformProperty: PlatformProperty<By>,
-        attempts: Int = 1,
-        sleepBetweenAttempts: Long = 500,
         timeout: Long = elementPollingTimeout,
         interval: Long = elementPollingInterval
     ): PageObject {
         val by = byPlatformProperty.getValue()
-        for (i in 1..attempts) {
-            try {
-                lookupElement(by, timeout, interval, noScroll)
-            } catch (e: TimeoutException) {
-                if (sleepBetweenAttempts > 0) {
-                    TimeUnit.MILLISECONDS.sleep(sleepBetweenAttempts)
-                }
-                return this
-            }
-        }
-        throw RuntimeException("Element '$by' is not disappeared")
+        waitDriver
+            .withTimeout(Duration.ofMillis(timeout))
+            .pollingEvery(Duration.ofMillis(interval))
+            .until(ExpectedConditions.invisibilityOfElementLocated(by))
+        return this
     }
 
     /**
