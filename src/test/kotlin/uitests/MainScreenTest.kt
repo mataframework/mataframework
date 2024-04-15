@@ -2,11 +2,13 @@ package uitests
 
 import com.github.mataframework.app.App
 import com.github.mataframework.app.AppLauncher
+import com.github.mataframework.app.Platform
+import com.github.mataframework.junit.EnableIfPlatformIs
+import com.github.mataframework.pages.PageObject
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import com.github.mataframework.pages.PageObject
 import uitests.ui.IntroductionPage
 import uitests.ui.LandingPage
 import uitests.ui.PlusAdsPage

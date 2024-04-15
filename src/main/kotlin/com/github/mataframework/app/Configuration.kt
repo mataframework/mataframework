@@ -1,9 +1,6 @@
 package com.github.mataframework.app
 
 object Configuration {
-    private enum class Platform {
-        ANDROID, IOS
-    }
 
     private var platform = Platform.ANDROID
     private var androidVersion = "8.1"
@@ -13,6 +10,10 @@ object Configuration {
     private var iosAppId = ""
     private var elementPollingTimeout = 7_000L
     private var elementPollingInterval = 500L
+
+    fun getPlatform(): Platform {
+        return platform
+    }
 
     fun isAndroid(): Boolean {
         return platform == Platform.ANDROID

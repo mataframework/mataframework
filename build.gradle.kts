@@ -21,6 +21,7 @@ dependencies {
     implementation("commons-io", "commons-io", "2.14.0")
     // https://mvnrepository.com/artifact/org.apache.commons/commons-text
     implementation("org.apache.commons", "commons-text", "1.10.0")
+    implementation("org.junit.jupiter", "junit-jupiter-api", "5.10.0")
 
     testImplementation(kotlin("test"))
     // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
