@@ -13,6 +13,7 @@ repositories {
 }
 
 dependencies {
+    implementation(kotlin("reflect"))
     // https://mvnrepository.com/artifact/org.jetbrains/annotations
     implementation("org.jetbrains", "annotations", "24.0.1")
     // https://mvnrepository.com/artifact/io.appium/java-client

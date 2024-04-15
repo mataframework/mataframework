@@ -1,20 +1,19 @@
 package uitests
 
-import com.github.mataframework.app.App
-import com.github.mataframework.app.AppLauncher
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
+import com.github.mataframework.junit.MataTestSuitSpecification
 import com.github.mataframework.pages.PageObject
-import uitests.ui.IntroductionPage
+import org.junit.jupiter.api.Test
+import skips.SkipLanding
 import uitests.ui.LandingPage
-import uitests.ui.PlusAdsPage
 import uitests.ui.SearchPage
 
+@MataTestSuitSpecification(
+    beforeAllProcessors = [SkipLanding::class]
+)
 class SearchScreenTest {
 
     @Test
-    fun checkOpenApp() {
+    fun checkOpenApp(pageObject: PageObject) {
         pageObject
             .waitForElementAndClick(LandingPage.BottomNavigation.searchLocation, 30000)
             .waitForElementAndInput(SearchPage.editTextElement, "Форест Гамп")
@@ -24,30 +23,4 @@ class SearchScreenTest {
             .waitForElement(SearchPage.SearchResultSection.toResultsElement)
     }
 
-    companion object {
-        private lateinit var app: App
-        private lateinit var pageObject: PageObject
-
-        @JvmStatic
-        @BeforeAll
-        fun setUp() {
-            app = AppLauncher().launch()
-            pageObject = PageObject(app)
-
-            skipIntroductionPages()
-        }
-
-        private fun skipIntroductionPages() {
-            pageObject
-                .waitForElementAndClick(IntroductionPage.nextButtonLocation)
-                .waitForElementAndClick(IntroductionPage.nextButtonLocation)
-                .waitForElementAndClick(PlusAdsPage.skipButtonLocation)
-        }
-
-        @JvmStatic
-        @AfterAll
-        fun tearDown() {
-            app.close()
-        }
-    }
 }

@@ -1,23 +1,20 @@
 package uitests
 
-import com.github.mataframework.app.App
-import com.github.mataframework.app.AppLauncher
-import com.github.mataframework.app.Platform
-import com.github.mataframework.junit.EnableIfPlatformIs
+import com.github.mataframework.junit.MataTestSuitSpecification
 import com.github.mataframework.pages.PageObject
-import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import uitests.ui.IntroductionPage
+import skips.SkipLanding
 import uitests.ui.LandingPage
-import uitests.ui.PlusAdsPage
 import kotlin.test.assertTrue
 
+@MataTestSuitSpecification(
+    beforeAllProcessors = [SkipLanding::class]
+)
 class MainScreenTest {
 
     @Test
-    fun checkOpenApp() {
+    fun checkOpenApp(pageObject: PageObject) {
         pageObject
             .waitForElement(LandingPage.TopNavigation.myCinemaLocation, 30000) {
                 assertEquals("true", it.getAttribute("focused"))
@@ -32,30 +29,4 @@ class MainScreenTest {
             .waitForElement(LandingPage.infoBlockLocation)
     }
 
-    companion object {
-        private lateinit var app: App
-        private lateinit var pageObject: PageObject
-
-        @JvmStatic
-        @BeforeAll
-        fun setUp() {
-            app = AppLauncher().launch()
-            pageObject = PageObject(app)
-
-            skipIntroductionPages()
-        }
-
-        private fun skipIntroductionPages() {
-            pageObject
-                .waitForElementAndClick(IntroductionPage.nextButtonLocation)
-                .waitForElementAndClick(IntroductionPage.nextButtonLocation)
-                .waitForElementAndClick(PlusAdsPage.skipButtonLocation)
-        }
-
-        @JvmStatic
-        @AfterAll
-        fun tearDown() {
-            app.close()
-        }
-    }
 }

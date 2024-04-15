@@ -15,6 +15,10 @@ class App internal constructor(driver: AppiumDriver<MobileElement>?) : AutoClose
         val appiumDriver = driver ?: return
         try {
             appiumDriver.terminateApp(Configuration.getAppId())
+        } catch (e: WebDriverException) {
+            e.printStackTrace()
+        }
+        try {
             appiumDriver.quit()
         } catch (e: WebDriverException) {
             e.printStackTrace()

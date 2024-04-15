@@ -1,4 +1,4 @@
-package com.github.mataframework.junit
+package com.github.mataframework.junit.condition
 
 import com.github.mataframework.app.Configuration
 import com.github.mataframework.app.Platform
