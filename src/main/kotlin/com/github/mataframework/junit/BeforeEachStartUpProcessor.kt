@@ -6,7 +6,7 @@ import com.github.mataframework.pages.PageObject
 /**
  * Interface provides an ability to do some actions after the application started, but before any tests are started.
  */
-interface BeforeAllProcessor {
+interface BeforeEachStartUpProcessor {
     /**
      * Called after the application started, but before any tests are started.
      *

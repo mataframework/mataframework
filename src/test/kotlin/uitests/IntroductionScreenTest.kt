@@ -1,14 +1,14 @@
 package uitests
 
 import com.github.mataframework.junit.MataInject
-import com.github.mataframework.junit.MataTestSuitSpecification
+import com.github.mataframework.junit.MataTestSuit
 import com.github.mataframework.pages.PageObject
 import org.junit.jupiter.api.Test
 import uitests.ui.IntroductionPage
 import uitests.ui.PlusAdsPage
 import kotlin.test.assertEquals
 
-@MataTestSuitSpecification
+@MataTestSuit
 class IntroductionScreenTest {
     @MataInject
     private lateinit var pageObject: PageObject

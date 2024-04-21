@@ -6,33 +6,43 @@ import com.github.mataframework.exception.MataFrameworkException
 import com.github.mataframework.pages.PageObject
 import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback
+import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace
+import org.junit.jupiter.api.extension.ExtensionContext.Store
 import org.junit.platform.commons.support.AnnotationSupport
 
-class MataTestEngine : BeforeAllCallback, AfterAllCallback {
+class MataTestEngine : BeforeAllCallback, BeforeEachCallback, AfterAllCallback {
 
     @Throws(Exception::class)
     override fun beforeAll(context: ExtensionContext) {
         val testClass = context.requiredTestClass
-        val mataSpecification = AnnotationSupport.findAnnotation(testClass, MataTestSuitSpecification::class.java)
+        val mataSpecification = AnnotationSupport.findAnnotation(testClass, MataTestSuit::class.java)
             .orElseThrow { MataFrameworkException("MataTestSuitSpecification annotation not found.") }
 
         val store = context.getStore(MATA_FRAMEWORK)
         store.put(StorageKeys.MATA_SPECIFICATION, mataSpecification)
+    }
 
-        val appLauncher = AppLauncher()
-        val app = appLauncher.launch()
-        val pageObject = PageObject(app)
+    override fun beforeEach(context: ExtensionContext?) {
+        val classContext = context?.parent?.get() ?: return
+        val store = classContext.getStore(MATA_FRAMEWORK) ?: return
 
-        store.put(StorageKeys.APP_LAUNCHER, appLauncher)
-        store.put(StorageKeys.APP, app)
-        store.put(StorageKeys.PAGE_OBJECT, pageObject)
+        val cleanRun = context.testMethod
+            .flatMap { AnnotationSupport.findAnnotation(it, MataTest::class.java) }
+            .map { it.cleanRun }
+            .orElse(false)
 
-        for (beforeAllProcessor in mataSpecification.beforeAllProcessors) {
-            val processorInstance = beforeAllProcessor.objectInstance
-            processorInstance?.doBeforeAll(app, pageObject)
-                ?: throw MataFrameworkException("${beforeAllProcessor.qualifiedName} is not object.")
+        val app = store.get(StorageKeys.APP) as App?
+        val mataSpecification = store.get(StorageKeys.MATA_SPECIFICATION) as MataTestSuit
+
+        if (cleanRun || app == null) {
+            if (app != null) {
+                val pageObject = store.get(StorageKeys.PAGE_OBJECT) as PageObject?
+                shutDownApp(app, pageObject, mataSpecification)
+            }
+
+            startUpApp(cleanRun, store, mataSpecification)
         }
     }
 
@@ -42,8 +52,35 @@ class MataTestEngine : BeforeAllCallback, AfterAllCallback {
         val app = store.get(StorageKeys.APP) as App?
         val pageObject = store.get(StorageKeys.PAGE_OBJECT) as PageObject?
 
-        val mataSpecification = store.get(StorageKeys.MATA_SPECIFICATION) as MataTestSuitSpecification
-        for (afterAllProcessor in mataSpecification.afterAllProcessors) {
+        val mataSpecification = store.get(StorageKeys.MATA_SPECIFICATION) as MataTestSuit
+
+        shutDownApp(app, pageObject, mataSpecification)
+    }
+
+    private fun startUpApp(cleanRun: Boolean,
+                           store: Store,
+                           mataSpecification: MataTestSuit) {
+        val appLauncher = AppLauncher()
+        val app = appLauncher.launch(cleanRun)
+        val pageObject = PageObject(app)
+
+        store.put(StorageKeys.APP_LAUNCHER, appLauncher)
+        store.put(StorageKeys.APP, app)
+        store.put(StorageKeys.PAGE_OBJECT, pageObject)
+
+        for (beforeAllProcessor in mataSpecification.beforeEachStartUpProcessors) {
+            val processorInstance = beforeAllProcessor.objectInstance
+            processorInstance?.doBeforeAll(app, pageObject)
+                ?: throw MataFrameworkException("${beforeAllProcessor.qualifiedName} is not object.")
+        }
+    }
+
+    private fun shutDownApp(
+        app: App?,
+        pageObject: PageObject?,
+        mataSpecification: MataTestSuit
+    ) {
+        for (afterAllProcessor in mataSpecification.afterEachShutDownProcessors) {
             val processorInstance = afterAllProcessor.objectInstance
             processorInstance?.doAfterAll(app, pageObject)
                 ?: throw MataFrameworkException("${afterAllProcessor.qualifiedName} is not object.")

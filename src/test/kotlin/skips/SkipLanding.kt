@@ -1,12 +1,12 @@
 package skips
 
 import com.github.mataframework.app.App
-import com.github.mataframework.junit.BeforeAllProcessor
+import com.github.mataframework.junit.BeforeEachStartUpProcessor
 import com.github.mataframework.pages.PageObject
 import uitests.ui.IntroductionPage
 import uitests.ui.PlusAdsPage
 
-object SkipLanding : BeforeAllProcessor {
+object SkipLanding : BeforeEachStartUpProcessor {
 
     override fun doBeforeAll(app: App, pageObject: PageObject) {
         pageObject

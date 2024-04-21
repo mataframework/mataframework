@@ -4,7 +4,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import kotlin.reflect.KClass
 
 /**
- * Annotation describe MATA test.
+ * Annotation describe MATA test suit.
  */
 @ExtendWith(
     MataTestEngine::class,
@@ -13,7 +13,7 @@ import kotlin.reflect.KClass
 )
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
-annotation class MataTestSuitSpecification(
-    val beforeAllProcessors: Array<KClass<out BeforeAllProcessor>> = [],
-    val afterAllProcessors: Array<KClass<out AfterAllProcessor>> = []
+annotation class MataTestSuit(
+    val beforeEachStartUpProcessors: Array<KClass<out BeforeEachStartUpProcessor>> = [],
+    val afterEachShutDownProcessors: Array<KClass<out AfterEachShutDownProcessors>> = []
 )

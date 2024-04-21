@@ -1,14 +1,14 @@
 package uitests
 
-import com.github.mataframework.junit.MataTestSuitSpecification
+import com.github.mataframework.junit.MataTestSuit
 import com.github.mataframework.pages.PageObject
 import org.junit.jupiter.api.Test
 import skips.SkipLanding
 import uitests.ui.LandingPage
 import uitests.ui.SearchPage
 
-@MataTestSuitSpecification(
-    beforeAllProcessors = [SkipLanding::class]
+@MataTestSuit(
+    beforeEachStartUpProcessors = [SkipLanding::class]
 )
 class SearchScreenTest {
 

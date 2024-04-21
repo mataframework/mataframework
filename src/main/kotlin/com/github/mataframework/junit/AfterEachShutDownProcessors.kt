@@ -6,7 +6,7 @@ import com.github.mataframework.pages.PageObject
 /**
  * Interface provides an ability to do some actions before application close, but after all tests are done.
  */
-interface AfterAllProcessor {
+interface AfterEachShutDownProcessors {
     /**
      * Called after all tests executed, but before application was closed.
      *

@@ -14,7 +14,9 @@ import java.io.File
 import java.net.MalformedURLException
 import java.net.URL
 
-class AndroidDriver(private val autoLaunch: Boolean) {
+class AndroidDriver(
+    private val fullReset: Boolean
+) {
     fun getAndroidDriver(retryCount: Int): AppiumDriver<MobileElement> {
         try {
             return io.appium.java_client.android.AndroidDriver(
@@ -38,11 +40,14 @@ class AndroidDriver(private val autoLaunch: Boolean) {
     fun getCapabilities(): DesiredCapabilities {
         val appFile = File(Constants.ANDROID_APP)
         if (!appFile.exists()) {
-            throw MataFrameworkException("No ${Constants.ANDROID_APP} at project root.\n" +
-                    "Please build App for android, and copy APK to ${appFile.absolutePath}")
+            throw MataFrameworkException(
+                "No ${Constants.ANDROID_APP} at project root.\n" +
+                        "Please build App for android, and copy APK to ${appFile.absolutePath}"
+            )
         }
         val capabilities = DesiredCapabilities()
         capabilities.setCapability(MobileCapabilityType.APP, appFile.absolutePath)
+        capabilities.setCapability(MobileCapabilityType.FULL_RESET, fullReset)
         capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.ANDROID_UIAUTOMATOR2)
         capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, Platform.ANDROID.toString().lowercase())
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android Emulator")
