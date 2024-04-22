@@ -1,16 +1,32 @@
 package com.github.mataframework.app
 
+import com.github.mataframework.utils.Constants
+import java.net.URL
+
 object Configuration {
 
-    private var platform = Platform.ANDROID
-    private var androidVersion = "8.1"
-    private var iosVersion = "16.4"
-    private var iosDeviceName = "iPhone 14"
-    private var elementPollingTimeout = 7_000L
-    private var elementPollingInterval = 500L
+    private var platform = Constants.DEFAULT_PLATFORM
+    private var appiumUrl = Constants.DEFAULT_APPIUM_URL
+    private var iosDeviceName = Constants.DEFAULT_IOS_DEVICE_NAME
+    private var elementPollingTimeout = Constants.DEFAULT_ELEMENT_POLLING_TIMEOUT
+    private var elementPollingInterval = Constants.DEFAULT_ELEMENT_POLLING_INTERVAL
+
+    private var appVersionProperty = PlatformProperty(
+        Platform.ANDROID to Constants.DEFAULT_ANDROID_VERSION,
+        Platform.IOS to Constants.DEFAULT_IOS_VERSION
+    )
+
+    private var appLocationProperty = PlatformProperty(
+        Platform.ANDROID to Constants.DEFAULT_ANDROID_APP,
+        Platform.IOS to Constants.DEFAULT_IOS_APP
+    )
 
     fun getPlatform(): Platform {
         return platform
+    }
+
+    fun getAppiumUrl(): URL {
+        return appiumUrl
     }
 
     fun isAndroid(): Boolean {
@@ -22,11 +38,19 @@ object Configuration {
     }
 
     fun getAndroidVersion(): String {
-        return androidVersion
+        return appVersionProperty.get(Platform.ANDROID)
     }
 
     fun getIosVersion(): String {
-        return iosVersion
+        return appVersionProperty.get(Platform.IOS)
+    }
+
+    fun getAppVersion(): String {
+        return appVersionProperty.get()
+    }
+
+    fun getAppLocation(): String {
+        return appLocationProperty.get()
     }
 
     fun getIosDeviceName(): String {
@@ -42,24 +66,33 @@ object Configuration {
     }
 
     init {
-        val newPlatform = System.getProperty("platform")
-        if (newPlatform != null && newPlatform.isNotEmpty()) {
-            platform = when (newPlatform.lowercase()) {
+        "platform".ifSystemPropertyNotBlank {
+            platform = when (it.lowercase()) {
                 "ios" -> Platform.IOS
                 "android" -> Platform.ANDROID
-                else -> throw IllegalArgumentException("Unknown platform: $newPlatform")
+                else -> throw IllegalArgumentException("Unknown platform: $it")
             }
         }
 
-        System.getProperty("androidVersion")?.ifNotBlank { androidVersion = it }
+        "appiumUrl".ifSystemPropertyNotBlank { appiumUrl = URL(it) }
 
-        System.getProperty("iosVersion")?.ifNotBlank { iosVersion = it }
+        "androidVersion".ifSystemPropertyNotBlank { appVersionProperty.set(Platform.ANDROID, it) }
 
-        System.getProperty("iosDeviceName")?.ifNotBlank { iosDeviceName = it }
+        "iosVersion".ifSystemPropertyNotBlank { appVersionProperty.set(Platform.IOS, it) }
 
-        System.getProperty("elementPollingTimeout")?.ifNotBlank { elementPollingTimeout = it.toLong() }
+        "androidAppLocation".ifSystemPropertyNotBlank { appLocationProperty.set(Platform.ANDROID, it) }
 
-        System.getProperty("elementPollingInterval")?.ifNotBlank { elementPollingInterval = it.toLong() }
+        "iosAppLocation".ifSystemPropertyNotBlank { appLocationProperty.set(Platform.IOS, it) }
+
+        "iosDeviceName".ifSystemPropertyNotBlank { iosDeviceName = it }
+
+        "elementPollingTimeout".ifSystemPropertyNotBlank { elementPollingTimeout = it.toLong() }
+
+        "elementPollingInterval".ifSystemPropertyNotBlank { elementPollingInterval = it.toLong() }
+    }
+
+    private inline fun String.ifSystemPropertyNotBlank(block: (String) -> Unit) {
+        System.getProperty(this)?.ifNotBlank(block)
     }
 
     private inline fun <T : CharSequence> T?.ifNotBlank(block: (T) -> Unit) {

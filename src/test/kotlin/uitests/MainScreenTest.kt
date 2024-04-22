@@ -3,6 +3,7 @@ package uitests
 import com.github.mataframework.junit.MataInject
 import com.github.mataframework.junit.MataTest
 import com.github.mataframework.junit.MataTestSuit
+import com.github.mataframework.pages.LookupConfig
 import com.github.mataframework.pages.PageObject
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.MethodOrderer
@@ -23,8 +24,10 @@ class MainScreenTest {
     @Order(1)
     @MataTest
     fun checkOpenApp() {
+        val longWaitConfig = LookupConfig(30000)
+
         pageObject
-            .waitForElement(LandingPage.TopNavigation.myCinemaLocation, 30000) {
+            .waitForElement(LandingPage.TopNavigation.myCinemaLocation, longWaitConfig) {
                 assertEquals("true", it.getAttribute("focused"))
             }
             .waitForElement(LandingPage.BottomNavigation.hdLocation) {
@@ -41,17 +44,14 @@ class MainScreenTest {
     @MataTest(cleanRun = false)
     fun checkDoSomething() {
         pageObject
-            .waitForElement(LandingPage.TopNavigation.myCinemaLocation, 30000) {
-                assertEquals("true", it.getAttribute("focused"))
-            }
             .waitForElement(LandingPage.BottomNavigation.hdLocation) {
-                assertTrue { it.isSelected }
-                assertTrue { it.isEnabled }
+                pageObject.tap(it.location.x, it.location.y)
             }
             .waitForElement(LandingPage.ads1stLineLocation)
-            .waitForElement(LandingPage.ads2ndLineLocation)
-            .waitForElement(LandingPage.tryFreeButtonLocation)
-            .waitForElement(LandingPage.infoBlockLocation)
+            .waitForElement(LandingPage.BottomNavigation.hdLocation) {
+                pageObject.longTap(it.location.x, it.location.y)
+            }
+            .waitForElement(LandingPage.ads1stLineLocation)
     }
 
 }
