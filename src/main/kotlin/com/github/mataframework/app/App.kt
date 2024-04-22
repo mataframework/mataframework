@@ -13,8 +13,9 @@ class App internal constructor(driver: AppiumDriver<MobileElement>?) : AutoClose
 
     override fun close() {
         val appiumDriver = driver ?: return
+        val appId = appIdProperty.getValue()
         try {
-            appiumDriver.terminateApp(Configuration.getAppId())
+            appiumDriver.terminateApp(appId)
         } catch (e: WebDriverException) {
             e.printStackTrace()
         }
@@ -24,5 +25,12 @@ class App internal constructor(driver: AppiumDriver<MobileElement>?) : AutoClose
             e.printStackTrace()
         }
         driver = null
+    }
+
+    companion object {
+        val appIdProperty: PlatformProperty<String> = PlatformProperty(
+            "appPackage",
+            "bundleId"
+        )
     }
 }
