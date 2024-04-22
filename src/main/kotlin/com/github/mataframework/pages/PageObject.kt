@@ -29,20 +29,6 @@ open class PageObject(val app: App) {
     protected val waitDriver = WebDriverWait(driver, elementPollingTimeout, elementPollingInterval)
     protected val finger = PointerInput(PointerInput.Kind.TOUCH, "finger")
 
-    companion object {
-        /**
-         * Choose one of options based on current testing platform
-         *
-         * @param T type of setting
-         * @param android setting for Android platform
-         * @param ios setting for iOS platform
-         * @return one of passed option
-         */
-        fun <T> choose(android: T, ios: T): T {
-            return if (Configuration.isAndroid()) android else ios
-        }
-
-    }
 
     /**
      * Looking for an element with locator [byPlatformProperty].
