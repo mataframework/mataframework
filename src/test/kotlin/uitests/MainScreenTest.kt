@@ -13,7 +13,7 @@ import uitests.ui.LandingPage
 import kotlin.test.assertTrue
 
 @MataTestSuit(
-    beforeEachStartUpProcessors = [SkipLanding::class]
+    appStartUpProcessors = [SkipLanding::class]
 )
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class MainScreenTest {

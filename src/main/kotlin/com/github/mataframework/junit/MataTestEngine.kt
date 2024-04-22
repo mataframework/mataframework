@@ -68,10 +68,10 @@ class MataTestEngine : BeforeAllCallback, BeforeEachCallback, AfterAllCallback {
         store.put(StorageKeys.APP, app)
         store.put(StorageKeys.PAGE_OBJECT, pageObject)
 
-        for (beforeAllProcessor in mataSpecification.beforeEachStartUpProcessors) {
-            val processorInstance = beforeAllProcessor.objectInstance
-            processorInstance?.doBeforeAll(app, pageObject)
-                ?: throw MataFrameworkException("${beforeAllProcessor.qualifiedName} is not object.")
+        for (listenerKClass in mataSpecification.appStartUpProcessors) {
+            val listener = listenerKClass.objectInstance
+            listener?.onAppStartUp(app, pageObject)
+                ?: throw MataFrameworkException("${listenerKClass.qualifiedName} is not object.")
         }
     }
 
@@ -80,10 +80,10 @@ class MataTestEngine : BeforeAllCallback, BeforeEachCallback, AfterAllCallback {
         pageObject: PageObject?,
         mataSpecification: MataTestSuit
     ) {
-        for (afterAllProcessor in mataSpecification.afterEachShutDownProcessors) {
-            val processorInstance = afterAllProcessor.objectInstance
-            processorInstance?.doAfterAll(app, pageObject)
-                ?: throw MataFrameworkException("${afterAllProcessor.qualifiedName} is not object.")
+        for (listenerKClass in mataSpecification.appShutDownListener) {
+            val listener = listenerKClass.objectInstance
+            listener?.onAppShutDown(app, pageObject)
+                ?: throw MataFrameworkException("${listenerKClass.qualifiedName} is not object.")
         }
 
         app?.close()

@@ -8,7 +8,7 @@ import uitests.ui.LandingPage
 import uitests.ui.SearchPage
 
 @MataTestSuit(
-    beforeEachStartUpProcessors = [SkipLanding::class]
+    appStartUpProcessors = [SkipLanding::class]
 )
 class SearchScreenTest {
 

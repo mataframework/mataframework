@@ -14,6 +14,6 @@ import kotlin.reflect.KClass
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
 annotation class MataTestSuit(
-    val beforeEachStartUpProcessors: Array<KClass<out BeforeEachStartUpProcessor>> = [],
-    val afterEachShutDownProcessors: Array<KClass<out AfterEachShutDownProcessors>> = []
+    val appStartUpProcessors: Array<KClass<out AppStartUpListener>> = [],
+    val appShutDownListener: Array<KClass<out AppShutDownListener>> = []
 )

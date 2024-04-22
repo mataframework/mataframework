@@ -10,7 +10,7 @@ import uitests.ui.LandingPage
 import uitests.ui.MediaPage
 
 @MataTestSuit(
-    beforeEachStartUpProcessors = [SkipLanding::class]
+    appStartUpProcessors = [SkipLanding::class]
 )
 class MediaScreenTest {
     @Test
