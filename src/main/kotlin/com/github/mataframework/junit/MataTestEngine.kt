@@ -22,6 +22,9 @@ class MataTestEngine : BeforeAllCallback, BeforeEachCallback, AfterAllCallback {
 
         val store = context.getStore(MATA_FRAMEWORK)
         store.put(StorageKeys.MATA_SPECIFICATION, mataSpecification)
+
+        val appLauncher = AppLauncher()
+        store.put(StorageKeys.APP_LAUNCHER, appLauncher)
     }
 
     override fun beforeEach(context: ExtensionContext?) {
@@ -57,14 +60,15 @@ class MataTestEngine : BeforeAllCallback, BeforeEachCallback, AfterAllCallback {
         shutDownApp(app, pageObject, mataSpecification)
     }
 
-    private fun startUpApp(cleanRun: Boolean,
-                           store: Store,
-                           mataSpecification: MataTestSuit) {
-        val appLauncher = AppLauncher()
+    private fun startUpApp(
+        cleanRun: Boolean,
+        store: Store,
+        mataSpecification: MataTestSuit
+    ) {
+        val appLauncher = store.get(StorageKeys.APP_LAUNCHER) as AppLauncher
         val app = appLauncher.launch(cleanRun)
         val pageObject = PageObject(app)
 
-        store.put(StorageKeys.APP_LAUNCHER, appLauncher)
         store.put(StorageKeys.APP, app)
         store.put(StorageKeys.PAGE_OBJECT, pageObject)
 
