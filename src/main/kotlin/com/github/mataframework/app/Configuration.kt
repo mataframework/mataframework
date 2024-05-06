@@ -25,6 +25,10 @@ object Configuration {
         return platform
     }
 
+    fun getPlatformVersion(): String {
+        return appVersionProperty.get()
+    }
+
     fun getAppiumUrl(): URL {
         return appiumUrl
     }

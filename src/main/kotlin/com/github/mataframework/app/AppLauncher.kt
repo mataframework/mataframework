@@ -4,11 +4,13 @@ import com.github.mataframework.app.driver.MataAndroidDriver
 import com.github.mataframework.app.driver.MataIosDriver
 import io.appium.java_client.AppiumDriver
 import io.appium.java_client.MobileElement
+import io.qameta.allure.Step
 
 class AppLauncher {
     private var app: App? = null
     private val retryCount: Int = 1
 
+    @Step("Launch application")
     fun launch(fullReset: Boolean): App {
         // TODO if last app is not closed
 

@@ -41,4 +41,7 @@ class PlatformProperty<T>(vararg pairs: Pair<Platform, T>) {
         config[platform] = value
     }
 
+    override fun toString(): String {
+        return "Platform value: ${get()}"
+    }
 }

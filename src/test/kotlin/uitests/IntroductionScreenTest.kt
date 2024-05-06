@@ -4,6 +4,7 @@ import com.github.mataframework.junit.MataInject
 import com.github.mataframework.junit.MataTestSuit
 import com.github.mataframework.pages.LookupConfig
 import com.github.mataframework.pages.PageObject
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import uitests.ui.IntroductionPage
 import uitests.ui.PlusAdsPage
@@ -15,6 +16,7 @@ class IntroductionScreenTest {
     private lateinit var pageObject: PageObject
 
     @Test
+    @DisplayName("Проверка вступительного экрана")
     fun checkIntroductionPages() {
         val longWaitConfig = LookupConfig(30000)
 

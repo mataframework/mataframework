@@ -6,6 +6,8 @@ import com.github.mataframework.app.PlatformProperty
 import com.github.mataframework.exception.MataFrameworkException
 import com.github.mataframework.pages.scroll.ScrollAction
 import io.appium.java_client.MobileElement
+import io.qameta.allure.Allure
+import io.qameta.allure.Step
 import org.openqa.selenium.By
 import org.openqa.selenium.TimeoutException
 import org.openqa.selenium.support.ui.ExpectedConditions
@@ -29,6 +31,7 @@ open class PageObject(val app: App) {
      * @exception org.openqa.selenium.TimeoutException if element not found for required timeout
      * @return self-reference
      */
+    @Step("Wait for element '{byPlatformProperty}' appeared on screen")
     fun waitForElement(
         byPlatformProperty: PlatformProperty<By>,
         lookupConfig: LookupConfig = defaultConfig,
@@ -55,15 +58,19 @@ open class PageObject(val app: App) {
      *
      * @return self-reference
      */
+    @Step("Optionally wait for element '{byPlatformProperty}' appeared on screen")
     fun waitForElementOrNull(
         byPlatformProperty: PlatformProperty<By>,
         lookupConfig: LookupConfig = defaultConfig,
         consumer: (MobileElement) -> Unit = noop
     ): PageObject {
         try {
-            return waitForElement(byPlatformProperty, lookupConfig, consumer)
+            val element = waitForElement(byPlatformProperty, lookupConfig, consumer)
+            Allure.attachment("found", "true")
+            return element
         } catch (_: TimeoutException) {
         }
+        Allure.attachment("found", "false")
         return this
     }
 
@@ -77,6 +84,7 @@ open class PageObject(val app: App) {
      * @exception org.openqa.selenium.TimeoutException if element not found for required timeout
      * @return self-reference
      */
+    @Step("Wait for element '{byPlatformProperty}' overlapped")
     fun waitForOverlappedElement(
         byPlatformProperty: PlatformProperty<By>,
         lookupConfig: LookupConfig = defaultConfig,
@@ -103,15 +111,19 @@ open class PageObject(val app: App) {
      *
      * @return self-reference
      */
+    @Step("Optionally wait for element '{byPlatformProperty}' overlapped")
     fun waitForOverlappedElementOrNull(
         byPlatformProperty: PlatformProperty<By>,
         lookupConfig: LookupConfig = defaultConfig,
         consumer: (MobileElement) -> Unit = noop
     ): PageObject {
         try {
-            return waitForOverlappedElement(byPlatformProperty, lookupConfig, consumer)
+            val element = waitForOverlappedElement(byPlatformProperty, lookupConfig, consumer)
+            Allure.attachment("found", "true")
+            return element
         } catch (_: TimeoutException) {
         }
+        Allure.attachment("found", "false")
         return this
     }
 
@@ -126,6 +138,7 @@ open class PageObject(val app: App) {
      * @exception org.openqa.selenium.TimeoutException if element not found for required timeout
      * @return self-reference
      */
+    @Step("Wait for element '{byPlatformProperty}' disappear")
     fun waitForElementDisappear(
         byPlatformProperty: PlatformProperty<By>,
         lookupConfig: LookupConfig = defaultConfig,
@@ -158,6 +171,7 @@ open class PageObject(val app: App) {
      * @exception org.openqa.selenium.TimeoutException if element not found for required timeout
      * @return self-reference
      */
+    @Step("Wait for element '{byPlatformProperty}' appeared on screen. Click on element after appearing")
     fun waitForElementAndClick(
         byPlatformProperty: PlatformProperty<By>,
         lookupConfig: LookupConfig = defaultConfig
@@ -172,6 +186,7 @@ open class PageObject(val app: App) {
      *
      * @return self-reference
      */
+    @Step("Make short tap at ({x}, {y})")
     fun tap(
         x: Int,
         y: Int,
@@ -191,6 +206,7 @@ open class PageObject(val app: App) {
      *
      * @return self-reference
      */
+    @Step("Make long tap at ({x}, {y})")
     fun longTap(
         x: Int,
         y: Int,
@@ -216,12 +232,14 @@ open class PageObject(val app: App) {
      * @exception org.openqa.selenium.TimeoutException if element not found for required timeout
      * @return self-reference
      */
+    @Step("Wait for element '{byPlatformProperty}' appeared on screen. Process element text after appearing")
     fun waitForElementAndGetText(
         byPlatformProperty: PlatformProperty<By>,
         lookupConfig: LookupConfig = defaultConfig,
         consumer: (String) -> Unit
     ): PageObject {
         return waitForElement(byPlatformProperty, lookupConfig) {
+            Allure.attachment("text", it.text)
             consumer(it.text)
         }
     }
@@ -238,6 +256,7 @@ open class PageObject(val app: App) {
      * @exception org.openqa.selenium.TimeoutException if element not found for required timeout
      * @return self-reference
      */
+    @Step("Wait for element '{byPlatformProperty}' appeared on screen. Process element attribute after appearing")
     fun waitForElementAndGetAttribute(
         byPlatformProperty: PlatformProperty<By>,
         attributePlatformProperty: PlatformProperty<String>,
@@ -246,6 +265,7 @@ open class PageObject(val app: App) {
     ): PageObject {
         val attributeKey = attributePlatformProperty.get()
         return waitForElement(byPlatformProperty, lookupConfig) {
+            Allure.attachment("Attribute value", it.getAttribute(attributeKey))
             consumer(it.getAttribute(attributeKey))
         }
     }
@@ -264,6 +284,7 @@ open class PageObject(val app: App) {
      * @exception org.openqa.selenium.TimeoutException if element not found for required timeout
      * @return self-reference
      */
+    @Step("Wait for element '{byPlatformProperty}' appeared on screen. Input data into element after appearing")
     fun waitForElementAndInput(
         byPlatformProperty: PlatformProperty<By>,
         input: String,
@@ -289,6 +310,7 @@ open class PageObject(val app: App) {
      * @exception org.openqa.selenium.TimeoutException if element not found for required timeout
      * @return self-reference
      */
+    @Step("Wait for element '{byPlatformProperty}' appeared on screen. Scroll element after appearing")
     fun waitForElementAndScroll(
         byPlatformProperty: PlatformProperty<By>,
         elementScrollAction: ScrollAction,
