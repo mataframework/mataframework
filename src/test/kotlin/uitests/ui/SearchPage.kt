@@ -1,35 +1,31 @@
 package uitests.ui
 
-import app.PlatformProperty
+import com.github.mataframework.app.Platform
+import com.github.mataframework.app.PlatformProperty
 import org.openqa.selenium.By
 
 object SearchPage {
 
-    val editTextElement: PlatformProperty<By> = PlatformProperty(
-            By.id("ru.kinopoisk:id/search_edit_text"),
-            By.xpath("") //TODO: fill for iOS
+    val editTextElement: PlatformProperty<By> = PlatformProperty.of(
+        Platform.ANDROID to By.id("ru.kinopoisk:id/search_edit_text")
     )
 
-    val recommendedToLookTextElement: PlatformProperty<By> = PlatformProperty(
-            By.id("ru.kinopoisk:id/search_recycler_view"),
-            By.xpath("") //TODO: fill for iOS
+    val recommendedToLookTextElement: PlatformProperty<By> = PlatformProperty.of(
+        Platform.ANDROID to By.id("ru.kinopoisk:id/search_recycler_view")
     )
 
     object SearchResultSection {
 
-        val allResultsElement: PlatformProperty<By> = PlatformProperty(
-                By.id("ru.kinopoisk:id/all"),
-                By.id("") //TODO: fill for iOS
+        val allResultsElement: PlatformProperty<By> = PlatformProperty.of(
+            Platform.ANDROID to By.id("ru.kinopoisk:id/all")
         )
 
-        val suggestsElement: PlatformProperty<By> = PlatformProperty(
-                By.xpath("//androidx.recyclerview.widget.RecyclerView[@resource-id=\"ru.kinopoisk:id/suggests_recycler_view\"]"),
-                By.id("") //TODO: fill for iOS
+        val suggestsElement: PlatformProperty<By> = PlatformProperty.of(
+            Platform.ANDROID to By.xpath("//androidx.recyclerview.widget.RecyclerView[@resource-id=\"ru.kinopoisk:id/suggests_recycler_view\"]")
         )
 
-        val toResultsElement: PlatformProperty<By> = PlatformProperty(
-                By.xpath("//android.widget.Button[@resource-id=\"ru.kinopoisk:id/search_all_button\"]"),
-                By.id("") //TODO: fill for iOS
+        val toResultsElement: PlatformProperty<By> = PlatformProperty.of(
+            Platform.ANDROID to By.xpath("//android.widget.Button[@resource-id=\"ru.kinopoisk:id/search_all_button\"]")
         )
 
     }

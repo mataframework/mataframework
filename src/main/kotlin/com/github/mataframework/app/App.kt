@@ -1,4 +1,4 @@
-package app
+package com.github.mataframework.app
 
 import io.appium.java_client.AppiumDriver
 import io.appium.java_client.MobileElement
@@ -13,12 +13,24 @@ class App internal constructor(driver: AppiumDriver<MobileElement>?) : AutoClose
 
     override fun close() {
         val appiumDriver = driver ?: return
+        val appId = appIdProperty.getValue()
         try {
-            appiumDriver.terminateApp(Configuration.getAppId())
+            appiumDriver.terminateApp(appId)
+        } catch (e: WebDriverException) {
+            e.printStackTrace()
+        }
+        try {
             appiumDriver.quit()
         } catch (e: WebDriverException) {
             e.printStackTrace()
         }
         driver = null
+    }
+
+    companion object {
+        val appIdProperty: PlatformProperty<String> = PlatformProperty(
+            "appPackage",
+            "bundleId"
+        )
     }
 }

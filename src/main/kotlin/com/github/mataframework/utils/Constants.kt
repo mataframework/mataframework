@@ -1,4 +1,4 @@
-package utils
+package com.github.mataframework.utils
 
 object Constants {
     const val ANDROID_APP: String = "android.apk"

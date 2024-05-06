@@ -1,16 +1,17 @@
 package uitests
 
-import app.App
-import app.AppLauncher
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
+import com.github.mataframework.junit.MataInject
+import com.github.mataframework.junit.MataTestSuit
+import com.github.mataframework.pages.PageObject
 import org.junit.jupiter.api.Test
-import pages.PageObject
 import uitests.ui.IntroductionPage
 import uitests.ui.PlusAdsPage
 import kotlin.test.assertEquals
 
+@MataTestSuit
 class IntroductionScreenTest {
+    @MataInject
+    private lateinit var pageObject: PageObject
 
     @Test
     fun checkIntroductionPages() {
@@ -30,23 +31,5 @@ class IntroductionScreenTest {
                 assertEquals("Подписка Плюс Больше кино", it)
             }
             .waitForElementAndClick(PlusAdsPage.skipButtonLocation)
-    }
-
-    companion object {
-        private lateinit var app: App
-        private lateinit var pageObject: PageObject
-
-        @JvmStatic
-        @BeforeAll
-        fun setUp() {
-            app = AppLauncher().launch()
-            pageObject = PageObject(app)
-        }
-
-        @JvmStatic
-        @AfterAll
-        fun tearDown() {
-            app.close()
-        }
     }
 }

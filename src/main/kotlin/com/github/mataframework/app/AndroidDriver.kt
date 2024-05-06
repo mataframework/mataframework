@@ -1,5 +1,7 @@
-package app
+package com.github.mataframework.app
 
+import com.github.mataframework.exception.MataFrameworkException
+import com.github.mataframework.utils.Constants
 import io.appium.java_client.AppiumDriver
 import io.appium.java_client.MobileElement
 import io.appium.java_client.remote.AutomationName
@@ -8,12 +10,13 @@ import org.openqa.selenium.Platform
 import org.openqa.selenium.SessionNotCreatedException
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.remote.DesiredCapabilities
-import utils.Constants
 import java.io.File
 import java.net.MalformedURLException
 import java.net.URL
 
-class AndroidDriver(private val autoLaunch: Boolean) {
+class AndroidDriver(
+    private val fullReset: Boolean
+) {
     fun getAndroidDriver(retryCount: Int): AppiumDriver<MobileElement> {
         try {
             return io.appium.java_client.android.AndroidDriver(
@@ -25,23 +28,26 @@ class AndroidDriver(private val autoLaunch: Boolean) {
                 println("Failed to init Android driver")
                 return getAndroidDriver(retryCount - 1)
             } else {
-                throw RuntimeException("Failed to init Android driver. Please check if an emulator is running", e)
+                throw MataFrameworkException("Failed to init Android driver. Please check if an emulator is running", e)
             }
         } catch (e: WebDriverException) {
-            throw RuntimeException("Failed to init Android driver. Please check if Appium is running", e)
+            throw MataFrameworkException("Failed to init Android driver. Please check if Appium is running", e)
         } catch (e: MalformedURLException) {
-            throw RuntimeException("Failed to init Android driver", e)
+            throw MataFrameworkException("Failed to init Android driver", e)
         }
     }
 
     fun getCapabilities(): DesiredCapabilities {
         val appFile = File(Constants.ANDROID_APP)
         if (!appFile.exists()) {
-            throw RuntimeException("No ${Constants.ANDROID_APP} at project root.\n" +
-                    "Please build App for android, and copy APK to ${appFile.absolutePath}")
+            throw MataFrameworkException(
+                "No ${Constants.ANDROID_APP} at project root.\n" +
+                        "Please build App for android, and copy APK to ${appFile.absolutePath}"
+            )
         }
         val capabilities = DesiredCapabilities()
         capabilities.setCapability(MobileCapabilityType.APP, appFile.absolutePath)
+        capabilities.setCapability(MobileCapabilityType.FULL_RESET, fullReset)
         capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.ANDROID_UIAUTOMATOR2)
         capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, Platform.ANDROID.toString().lowercase())
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android Emulator")

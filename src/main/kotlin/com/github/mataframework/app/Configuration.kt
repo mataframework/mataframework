@@ -1,18 +1,17 @@
-package app
+package com.github.mataframework.app
 
 object Configuration {
-    private enum class Platform {
-        ANDROID, IOS
-    }
 
     private var platform = Platform.ANDROID
     private var androidVersion = "8.1"
     private var iosVersion = "16.4"
     private var iosDeviceName = "iPhone 14"
-    private var androidAppId = ""
-    private var iosAppId = ""
     private var elementPollingTimeout = 7_000L
     private var elementPollingInterval = 500L
+
+    fun getPlatform(): Platform {
+        return platform
+    }
 
     fun isAndroid(): Boolean {
         return platform == Platform.ANDROID
@@ -42,13 +41,6 @@ object Configuration {
         return elementPollingInterval
     }
 
-    fun getAppId(): String {
-        return when (platform) {
-            Platform.IOS -> iosAppId
-            Platform.ANDROID -> androidAppId
-        }
-    }
-
     init {
         val newPlatform = System.getProperty("platform")
         if (newPlatform != null && newPlatform.isNotEmpty()) {
@@ -64,10 +56,6 @@ object Configuration {
         System.getProperty("iosVersion")?.ifNotBlank { iosVersion = it }
 
         System.getProperty("iosDeviceName")?.ifNotBlank { iosDeviceName = it }
-
-        System.getProperty("androidAppId")?.ifNotBlank { androidAppId = it }
-
-        System.getProperty("iosAppId")?.ifNotBlank { iosAppId = it }
 
         System.getProperty("elementPollingTimeout")?.ifNotBlank { elementPollingTimeout = it.toLong() }
 

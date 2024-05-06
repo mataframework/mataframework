@@ -1,18 +1,17 @@
 package uitests.ui
 
-import app.PlatformProperty
+import com.github.mataframework.app.Platform
+import com.github.mataframework.app.PlatformProperty
 import org.openqa.selenium.By
 
 object IntroductionPage {
 
-    val descriptionLocation: PlatformProperty<By> = PlatformProperty(
-        By.id("ru.kinopoisk:id/description"),
-        By.xpath("") //TODO: fill for iOS
+    val descriptionLocation: PlatformProperty<By> = PlatformProperty.of(
+        Platform.ANDROID to By.id("ru.kinopoisk:id/description")
     )
 
-    val nextButtonLocation: PlatformProperty<By> = PlatformProperty(
-        By.id("ru.kinopoisk:id/button_next"),
-        By.xpath("") //TODO: fill for iOS
+    val nextButtonLocation: PlatformProperty<By> = PlatformProperty.of(
+        Platform.ANDROID to By.id("ru.kinopoisk:id/button_next")
     )
 
 }

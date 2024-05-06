@@ -1,8 +1,11 @@
-package pages
+package com.github.mataframework.pages
 
-import app.App
-import app.Configuration
-import app.PlatformProperty
+import com.github.mataframework.app.App
+import com.github.mataframework.app.Configuration
+import com.github.mataframework.app.PlatformProperty
+import com.github.mataframework.exception.MataFrameworkException
+import com.github.mataframework.pages.scroll.ScrollAction
+import com.github.mataframework.pages.scroll.ScrollDirection
 import io.appium.java_client.AppiumDriver
 import io.appium.java_client.MobileElement
 import org.openqa.selenium.By
@@ -11,10 +14,9 @@ import org.openqa.selenium.interactions.PointerInput
 import org.openqa.selenium.interactions.Sequence
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
-import pages.scroll.ScrollAction
-import pages.scroll.ScrollDirection
 import java.lang.reflect.Type
 import java.time.Duration
+import java.util.concurrent.TimeUnit
 
 open class PageObject(val app: App) {
 
@@ -27,20 +29,6 @@ open class PageObject(val app: App) {
     protected val waitDriver = WebDriverWait(driver, elementPollingTimeout, elementPollingInterval)
     protected val finger = PointerInput(PointerInput.Kind.TOUCH, "finger")
 
-    companion object {
-        /**
-         * Choose one of options based on current testing platform
-         *
-         * @param T type of setting
-         * @param android setting for Android platform
-         * @param ios setting for iOS platform
-         * @return one of passed option
-         */
-        fun <T> choose(android: T, ios: T): T {
-            return if (Configuration.isAndroid()) android else ios
-        }
-
-    }
 
     /**
      * Looking for an element with locator [byPlatformProperty].
@@ -86,15 +74,23 @@ open class PageObject(val app: App) {
      */
     fun waitForElementDisappear(
         byPlatformProperty: PlatformProperty<By>,
+        attempts: Int = 1,
+        sleepBetweenAttempts: Long = 500,
         timeout: Long = elementPollingTimeout,
         interval: Long = elementPollingInterval
     ): PageObject {
         val by = byPlatformProperty.getValue()
-        waitDriver
-            .withTimeout(Duration.ofMillis(timeout))
-            .pollingEvery(Duration.ofMillis(interval))
-            .until(ExpectedConditions.invisibilityOfElementLocated(by))
-        return this
+        for (i in 1..attempts) {
+            try {
+                lookupElement(by, timeout, interval, noScroll)
+            } catch (e: TimeoutException) {
+                if (sleepBetweenAttempts > 0) {
+                    TimeUnit.MILLISECONDS.sleep(sleepBetweenAttempts)
+                }
+                return this
+            }
+        }
+        throw MataFrameworkException("Element '$by' is not disappeared")
     }
 
     /**
@@ -319,7 +315,7 @@ open class PageObject(val app: App) {
                 throw e
             }
         }
-        throw RuntimeException("Retry exceeds")
+        throw MataFrameworkException("Retry exceeds")
     }
 
     private fun fitElement(mobileElement: MobileElement) {
