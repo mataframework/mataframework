@@ -7,25 +7,38 @@ import com.github.mataframework.exception.MataFrameworkException
  * @author sibmaks
  * @since 0.0.1
  */
-class PlatformProperty<T>(private val config: Map<Platform, T>) {
+class PlatformProperty<T>(vararg pairs: Pair<Platform, T>) {
+    private val config = mutableMapOf(*pairs)
 
     constructor(androidValue: T, iOSValue: T) : this(
-        mapOf(
-            Platform.ANDROID to androidValue,
-            Platform.IOS to iOSValue,
-        )
+        Platform.ANDROID to androidValue,
+        Platform.IOS to iOSValue,
     )
 
-    fun getValue(): T {
+    /**
+     * Get value for active platform.
+     *
+     * @throws MataFrameworkException throws if there are no value for active platform
+     */
+    fun get(): T {
         val platform = Configuration.getPlatform()
+        return get(platform)
+    }
+
+    /**
+     * Get value for [platform].
+     *
+     * @throws MataFrameworkException throws if there are no value for [platform]
+     */
+    fun get(platform: Platform): T {
         return config[platform] ?: throw MataFrameworkException("Property for platform '$platform' not found")
     }
 
-    companion object {
-        @JvmStatic
-        fun <V> of(vararg pairs: Pair<Platform, V>): PlatformProperty<V> {
-            return PlatformProperty(mapOf(*pairs))
-        }
+    /**
+     * Set value for [platform].
+     */
+    fun set(platform: Platform, value: T) {
+        config[platform] = value
     }
 
 }

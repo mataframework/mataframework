@@ -1,6 +1,7 @@
 package uitests
 
 import com.github.mataframework.junit.MataTestSuit
+import com.github.mataframework.pages.LookupConfig
 import com.github.mataframework.pages.PageObject
 import com.github.mataframework.pages.scroll.ScrollAction
 import com.github.mataframework.pages.scroll.ScrollDirection
@@ -15,25 +16,25 @@ import uitests.ui.MediaPage
 class MediaScreenTest {
     @Test
     fun checkOpenApp(pageObject: PageObject) {
+        val longWaitConfig = LookupConfig(30000)
+        val longWaitAndScrollConfig = LookupConfig(
+            1000,
+            scrollAction = ScrollAction(100, scrollTimes = 10),
+            fitRequired = true
+        )
+
         pageObject
-            .waitForElementAndClick(LandingPage.BottomNavigation.mediaLocation, 30000)
+            .waitForElementAndClick(LandingPage.BottomNavigation.mediaLocation, longWaitConfig)
             .waitForElementAndScroll(
                 MediaPage.soonFilmsCarouselElement,
                 ScrollAction(100),
-                timeout = 1000,
-                scrollAction = ScrollAction(100, scrollTimes = 10),
-                fitRequired = true
+                longWaitAndScrollConfig
             )
             .waitForElementAndScroll(
                 MediaPage.soonFilmsCarouselElement,
                 ScrollAction(100, ScrollDirection.RIGHT)
             )
-            .waitForElement(
-                MediaPage.trailersCarouselElement,
-                timeout = 1000,
-                scrollAction = ScrollAction(100, scrollTimes = 10),
-                fitRequired = true
-            )
+            .waitForElement(MediaPage.trailersCarouselElement, longWaitAndScrollConfig)
             .waitForElementAndScroll(
                 MediaPage.trailersCarouselElement,
                 ScrollAction(100, ScrollDirection.RIGHT)

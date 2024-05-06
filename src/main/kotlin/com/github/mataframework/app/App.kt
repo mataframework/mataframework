@@ -1,19 +1,19 @@
 package com.github.mataframework.app
 
+import com.github.mataframework.exception.MataFrameworkException
 import io.appium.java_client.AppiumDriver
 import io.appium.java_client.MobileElement
 import org.openqa.selenium.WebDriverException
 
-class App internal constructor(driver: AppiumDriver<MobileElement>?) : AutoCloseable {
-    var driver: AppiumDriver<MobileElement>?
-
-    init {
-        this.driver = driver
-    }
+class App internal constructor(val driver: AppiumDriver<MobileElement>) : AutoCloseable {
+    private var closed = false
 
     override fun close() {
-        val appiumDriver = driver ?: return
-        val appId = appIdProperty.getValue()
+        if (closed) {
+            throw MataFrameworkException("Closed already")
+        }
+        val appiumDriver = driver
+        val appId = appIdProperty.get()
         try {
             appiumDriver.terminateApp(appId)
         } catch (e: WebDriverException) {
@@ -24,7 +24,7 @@ class App internal constructor(driver: AppiumDriver<MobileElement>?) : AutoClose
         } catch (e: WebDriverException) {
             e.printStackTrace()
         }
-        driver = null
+        closed = true
     }
 
     companion object {

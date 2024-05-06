@@ -1,5 +1,7 @@
 package com.github.mataframework.app
 
+import com.github.mataframework.app.driver.MataAndroidDriver
+import com.github.mataframework.app.driver.MataIosDriver
 import io.appium.java_client.AppiumDriver
 import io.appium.java_client.MobileElement
 
@@ -11,16 +13,17 @@ class AppLauncher {
         // TODO if last app is not closed
 
         val driver: AppiumDriver<MobileElement> = createDriver(fullReset)
-        app = App(driver)
+        val instance = App(driver)
+        app = instance
 
-        return app!!
+        return instance
     }
 
     private fun createDriver(fullReset: Boolean): AppiumDriver<MobileElement> {
-        return if (Configuration.isAndroid()) {
-            AndroidDriver(fullReset).getAndroidDriver(retryCount)
-        } else {
-            IosDriver(fullReset).getIOSDriver(retryCount)
+        val mataDriver = when (Configuration.getPlatform()) {
+            Platform.ANDROID -> MataAndroidDriver(fullReset)
+            Platform.IOS -> MataIosDriver(fullReset)
         }
+        return mataDriver.buildDriver(retryCount)
     }
 }
