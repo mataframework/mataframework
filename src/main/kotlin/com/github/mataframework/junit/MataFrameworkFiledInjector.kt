@@ -13,7 +13,7 @@ class MataFrameworkFiledInjector : BeforeEachCallback {
     override fun beforeEach(context: ExtensionContext?) {
         val store = context?.getStore(MATA_FRAMEWORK) ?: return
 
-        val app = store.get(MataTestEngine.Companion.StorageKeys.APP) as App?
+        val app = store.get(MataTestEngine.Companion.StorageKeys.APP) as App<*>?
         val pageObject = store.get(MataTestEngine.Companion.StorageKeys.PAGE_OBJECT) as PageObject?
 
         val fields = context.testClass?.map {

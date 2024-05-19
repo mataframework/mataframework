@@ -15,7 +15,7 @@ import org.openqa.selenium.support.ui.WebDriverWait
 import java.lang.reflect.Type
 import java.time.Duration
 
-open class PageController(val app: App) {
+open class PageController(val app: App<*>) {
 
     private val elementPollingTimeout = Configuration.getElementPollingTimeout()
     private val elementPollingInterval = Configuration.getElementPollingInterval()

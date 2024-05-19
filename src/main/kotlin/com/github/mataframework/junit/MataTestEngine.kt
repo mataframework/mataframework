@@ -4,15 +4,16 @@ import com.github.mataframework.app.App
 import com.github.mataframework.app.AppLauncher
 import com.github.mataframework.exception.MataFrameworkException
 import com.github.mataframework.pages.PageObject
-import org.junit.jupiter.api.extension.AfterAllCallback
-import org.junit.jupiter.api.extension.BeforeAllCallback
-import org.junit.jupiter.api.extension.BeforeEachCallback
-import org.junit.jupiter.api.extension.ExtensionContext
+import io.appium.java_client.screenrecording.CanRecordScreen
+import io.qameta.allure.Allure
+import org.junit.jupiter.api.extension.*
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace
 import org.junit.jupiter.api.extension.ExtensionContext.Store
 import org.junit.platform.commons.support.AnnotationSupport
+import org.openqa.selenium.OutputType
+import java.util.*
 
-class MataTestEngine : BeforeAllCallback, BeforeEachCallback, AfterAllCallback {
+class MataTestEngine : BeforeAllCallback, BeforeEachCallback, AfterEachCallback, AfterAllCallback {
 
     @Throws(Exception::class)
     override fun beforeAll(context: ExtensionContext) {
@@ -36,7 +37,7 @@ class MataTestEngine : BeforeAllCallback, BeforeEachCallback, AfterAllCallback {
             .map { it.cleanRun }
             .orElse(false)
 
-        val app = store.get(StorageKeys.APP) as App?
+        var app = store.get(StorageKeys.APP) as App<*>?
         val mataSpecification = store.get(StorageKeys.MATA_SPECIFICATION) as MataTestSuit
 
         if (cleanRun || app == null) {
@@ -46,13 +47,63 @@ class MataTestEngine : BeforeAllCallback, BeforeEachCallback, AfterAllCallback {
             }
 
             startUpApp(cleanRun, store, mataSpecification)
+            app = store.get(StorageKeys.APP) as App<*>?
+        }
+
+        val recordExecution = context.testMethod
+            .flatMap { AnnotationSupport.findAnnotation(it, MataTest::class.java) }
+            .map { it.recordExecution }
+            .orElse(false)
+
+        val driver = app?.driver
+        if (recordExecution) {
+            if (driver is CanRecordScreen) {
+                driver.startRecordingScreen()
+            } else {
+                throw MataFrameworkException("Driver does not support screen recording")
+            }
+        }
+    }
+
+    override fun afterEach(context: ExtensionContext?) {
+        val store = context?.getStore(MATA_FRAMEWORK) ?: return
+
+        val screenshotOnFail = context.testMethod
+            .flatMap { AnnotationSupport.findAnnotation(it, MataTest::class.java) }
+            .map { it.screenshotOnFail }
+            .orElse(true)
+
+        val app = store.get(StorageKeys.APP) as App<*>?
+
+        if (screenshotOnFail) {
+            val executionException = context.executionException
+            if (executionException.isPresent) {
+                val screenshot = app?.driver?.getScreenshotAs(OutputType.BYTES)
+
+                Allure.addByteAttachmentAsync("Screenshot", "image/png") { screenshot }
+            }
+        }
+
+        val recordExecution = context.testMethod
+            .flatMap { AnnotationSupport.findAnnotation(it, MataTest::class.java) }
+            .map { it.recordExecution }
+            .orElse(false)
+
+        val driver = app?.driver
+        if (recordExecution) {
+            if (driver is CanRecordScreen) {
+                val content = driver.stopRecordingScreen()
+                Allure.addByteAttachmentAsync("Execution Screenshot", "video/mp4", "mp4") { Base64.getDecoder().decode(content) }
+            } else {
+                throw MataFrameworkException("Driver does not support screen recording")
+            }
         }
     }
 
     override fun afterAll(context: ExtensionContext?) {
         val store = context?.getStore(MATA_FRAMEWORK) ?: return
 
-        val app = store.get(StorageKeys.APP) as App?
+        val app = store.get(StorageKeys.APP) as App<*>?
         val pageObject = store.get(StorageKeys.PAGE_OBJECT) as PageObject?
 
         val mataSpecification = store.get(StorageKeys.MATA_SPECIFICATION) as MataTestSuit
@@ -80,7 +131,7 @@ class MataTestEngine : BeforeAllCallback, BeforeEachCallback, AfterAllCallback {
     }
 
     private fun shutDownApp(
-        app: App?,
+        app: App<*>?,
         pageObject: PageObject?,
         mataSpecification: MataTestSuit
     ) {

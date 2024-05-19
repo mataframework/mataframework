@@ -13,5 +13,5 @@ interface AppShutDownListener {
      * @param app - instance of the application
      * @param pageObject - instance of the page object
      */
-    fun onAppShutDown(app: App?, pageObject: PageObject?)
+    fun onAppShutDown(app: App<*>?, pageObject: PageObject?)
 }

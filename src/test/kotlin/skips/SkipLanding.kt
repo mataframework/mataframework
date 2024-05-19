@@ -8,7 +8,7 @@ import uitests.ui.PlusAdsPage
 
 object SkipLanding : AppStartUpListener {
 
-    override fun onAppStartUp(app: App, pageObject: PageObject) {
+    override fun onAppStartUp(app: App<*>, pageObject: PageObject) {
         pageObject
             .waitForElementAndClick(IntroductionPage.nextButtonLocation)
             .waitForElementAndClick(IntroductionPage.nextButtonLocation)

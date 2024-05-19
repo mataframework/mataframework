@@ -13,5 +13,5 @@ interface AppStartUpListener {
      * @param app - instance of the application
      * @param pageObject - instance of the page object
      */
-    fun onAppStartUp(app: App, pageObject: PageObject)
+    fun onAppStartUp(app: App<*>, pageObject: PageObject)
 }

@@ -13,7 +13,7 @@ import org.openqa.selenium.TimeoutException
 import org.openqa.selenium.support.ui.ExpectedConditions
 import java.util.concurrent.TimeUnit
 
-open class PageObject(val app: App) {
+open class PageObject(val app: App<*>) {
 
     private val noop = { _: MobileElement -> }
     private val defaultConfig = LookupConfig()

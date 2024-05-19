@@ -2,7 +2,6 @@ package com.github.mataframework.app.driver
 
 import com.github.mataframework.app.Configuration
 import com.github.mataframework.exception.MataFrameworkException
-import io.appium.java_client.AppiumDriver
 import io.appium.java_client.MobileElement
 import io.appium.java_client.ios.IOSDriver
 import io.appium.java_client.remote.AutomationName
@@ -16,8 +15,8 @@ import java.io.IOException
 
 class MataIosDriver(
     private val fullReset: Boolean
-) : MataDriver {
-    override fun buildDriver(retryCount: Int): AppiumDriver<MobileElement> {
+) : MataDriver<IOSDriver<MobileElement>> {
+    override fun buildDriver(retryCount: Int): IOSDriver<MobileElement> {
         try {
             return IOSDriver(Configuration.getAppiumUrl(), getCapabilities())
         } catch (e: SessionNotCreatedException) {

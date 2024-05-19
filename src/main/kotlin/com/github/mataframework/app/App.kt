@@ -3,10 +3,12 @@ package com.github.mataframework.app
 import com.github.mataframework.exception.MataFrameworkException
 import io.appium.java_client.AppiumDriver
 import io.appium.java_client.MobileElement
+import io.appium.java_client.screenrecording.CanRecordScreen
 import io.qameta.allure.Step
 import org.openqa.selenium.WebDriverException
 
-class App internal constructor(val driver: AppiumDriver<MobileElement>) : AutoCloseable {
+class App<T> internal constructor(val driver: T) :
+    AutoCloseable where T : AppiumDriver<MobileElement>, T : CanRecordScreen {
     private var closed = false
 
     @Step("Close application")

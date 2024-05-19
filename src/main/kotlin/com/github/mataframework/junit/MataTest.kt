@@ -9,5 +9,7 @@ import org.junit.jupiter.api.Test
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
 annotation class MataTest(
-    val cleanRun: Boolean = false
+    val cleanRun: Boolean = false,
+    val screenshotOnFail: Boolean = true,
+    val recordExecution: Boolean = false,
 )
