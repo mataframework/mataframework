@@ -32,10 +32,11 @@ class MataTestEngine : BeforeAllCallback, BeforeEachCallback, AfterEachCallback,
         val classContext = context?.parent?.get() ?: return
         val store = classContext.getStore(MATA_FRAMEWORK) ?: return
 
-        val cleanRun = context.testMethod
+        val mataTest = context.testMethod
             .flatMap { AnnotationSupport.findAnnotation(it, MataTest::class.java) }
-            .map { it.cleanRun }
-            .orElse(false)
+            .orElse(null) ?: return
+
+        val cleanRun = mataTest.cleanRun
 
         var app = store.get(StorageKeys.APP) as App<*>?
         val mataSpecification = store.get(StorageKeys.MATA_SPECIFICATION) as MataTestSuit
@@ -50,10 +51,7 @@ class MataTestEngine : BeforeAllCallback, BeforeEachCallback, AfterEachCallback,
             app = store.get(StorageKeys.APP) as App<*>?
         }
 
-        val recordExecution = context.testMethod
-            .flatMap { AnnotationSupport.findAnnotation(it, MataTest::class.java) }
-            .map { it.recordExecution }
-            .orElse(false)
+        val recordExecution = mataTest.recordExecution
 
         val driver = app?.driver
         if (recordExecution) {
@@ -68,10 +66,11 @@ class MataTestEngine : BeforeAllCallback, BeforeEachCallback, AfterEachCallback,
     override fun afterEach(context: ExtensionContext?) {
         val store = context?.getStore(MATA_FRAMEWORK) ?: return
 
-        val screenshotOnFail = context.testMethod
+        val mataTest = context.testMethod
             .flatMap { AnnotationSupport.findAnnotation(it, MataTest::class.java) }
-            .map { it.screenshotOnFail }
-            .orElse(true)
+            .orElse(null) ?: return
+
+        val screenshotOnFail = mataTest.screenshotOnFail
 
         val app = store.get(StorageKeys.APP) as App<*>?
 
@@ -80,20 +79,21 @@ class MataTestEngine : BeforeAllCallback, BeforeEachCallback, AfterEachCallback,
             if (executionException.isPresent) {
                 val screenshot = app?.driver?.getScreenshotAs(OutputType.BYTES)
 
-                Allure.addByteAttachmentAsync("Screenshot", "image/png") { screenshot }
+                val screenshotOnFailName = mataTest.screenshotOnFailName
+                Allure.addByteAttachmentAsync(screenshotOnFailName, "image/png") { screenshot }
             }
         }
 
-        val recordExecution = context.testMethod
-            .flatMap { AnnotationSupport.findAnnotation(it, MataTest::class.java) }
-            .map { it.recordExecution }
-            .orElse(false)
+        val recordExecution = mataTest.recordExecution
+        val recordExecutionName = mataTest.recordExecutionName
 
         val driver = app?.driver
         if (recordExecution) {
             if (driver is CanRecordScreen) {
                 val content = driver.stopRecordingScreen()
-                Allure.addByteAttachmentAsync("Execution Screenshot", "video/mp4", "mp4") { Base64.getDecoder().decode(content) }
+                Allure.addByteAttachmentAsync(recordExecutionName, "video/mp4", "mp4") {
+                    Base64.getDecoder().decode(content)
+                }
             } else {
                 throw MataFrameworkException("Driver does not support screen recording")
             }
@@ -135,13 +135,13 @@ class MataTestEngine : BeforeAllCallback, BeforeEachCallback, AfterEachCallback,
         pageObject: PageObject?,
         mataSpecification: MataTestSuit
     ) {
-        for (listenerKClass in mataSpecification.appShutDownListener) {
-            val listener = listenerKClass.objectInstance
-            listener?.onAppShutDown(app, pageObject)
-                ?: throw MataFrameworkException("${listenerKClass.qualifiedName} is not object.")
+        app.use {
+            for (listenerKClass in mataSpecification.appShutDownListener) {
+                val listener = listenerKClass.objectInstance
+                listener?.onAppShutDown(it, pageObject)
+                    ?: throw MataFrameworkException("${listenerKClass.qualifiedName} is not object.")
+            }
         }
-
-        app?.close()
     }
 
     companion object {

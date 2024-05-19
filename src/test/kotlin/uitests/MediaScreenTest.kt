@@ -1,11 +1,11 @@
 package uitests
 
+import com.github.mataframework.junit.MataTest
 import com.github.mataframework.junit.MataTestSuit
 import com.github.mataframework.pages.LookupConfig
 import com.github.mataframework.pages.PageObject
 import com.github.mataframework.pages.scroll.ScrollAction
 import com.github.mataframework.pages.scroll.ScrollDirection
-import org.junit.jupiter.api.Test
 import skips.SkipLanding
 import uitests.ui.LandingPage
 import uitests.ui.MediaPage
@@ -14,7 +14,7 @@ import uitests.ui.MediaPage
     appStartUpProcessors = [SkipLanding::class]
 )
 class MediaScreenTest {
-    @Test
+    @MataTest
     fun checkOpenApp(pageObject: PageObject) {
         val longWaitConfig = LookupConfig(30000)
         val longWaitAndScrollConfig = LookupConfig(

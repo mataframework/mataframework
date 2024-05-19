@@ -1,5 +1,6 @@
 package uitests
 
+import com.github.mataframework.junit.MataTest
 import com.github.mataframework.junit.MataTestSuit
 import com.github.mataframework.pages.LookupConfig
 import com.github.mataframework.pages.PageObject
@@ -13,7 +14,7 @@ import uitests.ui.SearchPage
 )
 class SearchScreenTest {
 
-    @Test
+    @MataTest
     fun checkOpenApp(pageObject: PageObject) {
         val longWaitConfig = LookupConfig(30000)
 

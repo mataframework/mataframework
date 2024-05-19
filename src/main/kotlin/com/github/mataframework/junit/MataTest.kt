@@ -11,5 +11,7 @@ import org.junit.jupiter.api.Test
 annotation class MataTest(
     val cleanRun: Boolean = false,
     val screenshotOnFail: Boolean = true,
+    val screenshotOnFailName: String = "Fail Screenshot",
     val recordExecution: Boolean = false,
+    val recordExecutionName: String = "Recording Test Run Screen",
 )
