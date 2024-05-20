@@ -8,6 +8,7 @@ import com.github.mataframework.pages.scroll.ScrollAction
 import io.appium.java_client.MobileElement
 import org.openqa.selenium.By
 import org.openqa.selenium.TimeoutException
+import org.openqa.selenium.remote.RemoteWebElement
 import org.openqa.selenium.support.ui.ExpectedConditions
 import java.util.concurrent.TimeUnit
 
@@ -61,8 +62,7 @@ open class PageObject(val app: App<*>) {
         consumer: (MobileElement) -> Unit = noop
     ): PageObject {
         try {
-            val element = waitForElement(byPlatformProperty, lookupConfig, consumer)
-            return element
+            return waitForElement(byPlatformProperty, lookupConfig, consumer)
         } catch (_: TimeoutException) {
         }
         return this
@@ -110,8 +110,7 @@ open class PageObject(val app: App<*>) {
         consumer: (MobileElement) -> Unit = noop
     ): PageObject {
         try {
-            val element = waitForOverlappedElement(byPlatformProperty, lookupConfig, consumer)
-            return element
+            return waitForOverlappedElement(byPlatformProperty, lookupConfig, consumer)
         } catch (_: TimeoutException) {
         }
         return this
@@ -305,4 +304,31 @@ open class PageObject(val app: App<*>) {
         }
     }
 
+    fun scroll(
+        element: RemoteWebElement,
+        elementScrollAction: ScrollAction
+    ) {
+        val location = element.location
+        val x = location.x
+        val y = location.y
+
+        pageController.scroll(x, y, elementScrollAction)
+    }
+
+    fun click(
+        element: RemoteWebElement
+    ) {
+        element.click()
+    }
+
+    fun input(
+        element: RemoteWebElement,
+        input: String,
+        click: Boolean = true
+    ) {
+        if (click) {
+            element.click()
+        }
+        element.sendKeys(input)
+    }
 }

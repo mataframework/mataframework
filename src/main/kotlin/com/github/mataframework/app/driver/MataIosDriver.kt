@@ -49,7 +49,7 @@ class MataIosDriver(
 
         val capabilities = DesiredCapabilities()
         capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, Platform.IOS)
-        capabilities.setCapability(MobileCapabilityType.FULL_RESET, fullReset)
+        capabilities.setCapability(MobileCapabilityType.NO_RESET, !fullReset)
         capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, Configuration.getIosVersion())
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, Configuration.getIosDeviceName())
         capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.IOS_XCUI_TEST)

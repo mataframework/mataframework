@@ -1,57 +1,70 @@
 package uitests
 
-import com.github.mataframework.junit.MataTest
-import com.github.mataframework.junit.MataTestSuit
-import com.github.mataframework.junit.spec.MataTestCase
 import com.github.mataframework.pages.LookupConfig
+import com.github.mataframework.spec.mataTest
+import com.github.mataframework.spec.option.AppOptions
 import io.qameta.allure.Allure
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 import uitests.ui.IntroductionPage
 import uitests.ui.PlusAdsPage
 import kotlin.test.assertEquals
 
-@MataTestSuit
-class IntroductionScreenTest : MataTestCase() {
-    @MataTest(recordExecution = true)
+class IntroductionScreenTest {
+    @Test
     @DisplayName("Проверка вступительных экранов")
     fun checkIntroductionPages() {
         val longWaitConfig = LookupConfig(30000)
 
-        mataTest {
+        mataTest(
+            appOptions = AppOptions(cleanRun = true)
+        ) {
             "Рекламный экран" {
-                "Проверяем наличие вступительного текста" {
-                    waitForElementAndGetText(IntroductionPage.descriptionLocation, longWaitConfig) {
-                        Allure.attachment("Вступительный текст", it)
-                        assertEquals("Смотрите тысячи\nфильмов\nи сериалов", it)
+                record {
+                    "Проверяем наличие вступительного текста" {
+                        waitForElement(IntroductionPage.descriptionLocation, longWaitConfig) {
+                            Allure.attachment("Вступительный текст", it.text)
+                            assertEquals("Смотрите тысячи\nфильмов\nи сериалов", it.text)
+                        }
                     }
-                }
-                "Нажимаем на кнопку 'Далее'" {
-                    waitForElementAndClick(IntroductionPage.nextButtonLocation)
+                    "Нажимаем на кнопку 'Далее'" {
+                        waitForElement(IntroductionPage.nextButtonLocation) {
+                            click(it)
+                        }
+                    }
                 }
             }
             "Второй рекламный экран" {
-                "Описание должно обновиться" {
-                    waitForElementAndGetText(IntroductionPage.descriptionLocation, longWaitConfig) {
-                        assertEquals("Скачивайте\nв дорогу", it)
+                record {
+                    "Описание должно обновиться" {
+                        waitForElement(IntroductionPage.descriptionLocation, longWaitConfig) {
+                            assertEquals("Скачивайте\nв дорогу", it.text)
+                        }
                     }
-                }
-                "Нажимаем на кнопку 'Далее'" {
-                    waitForElementAndClick(IntroductionPage.nextButtonLocation)
+                    "Нажимаем на кнопку 'Далее'" {
+                        waitForElement(IntroductionPage.nextButtonLocation) {
+                            click(it)
+                        }
+                    }
                 }
             }
             "Экран 'Предложение Подписки Плюс'" {
-                "Ожидается текст с предложением пробного периода" {
-                    waitForElementAndGetText(PlusAdsPage.primaryOfferTextLocation, longWaitConfig) {
-                        assertEquals("Смотрите кино\n30 дней бесплатно", it)
+                record("Экран 'Предложение Подписки Плюс'") {
+                    "Ожидается текст с предложением пробного периода" {
+                        waitForElement(PlusAdsPage.primaryOfferTextLocation, longWaitConfig) {
+                            assertEquals("Смотрите кино\n30 дней бесплатно", it.text)
+                        }
                     }
-                }
-                "Ожидается текст о большем количестве кино" {
-                    waitForElementAndGetText(PlusAdsPage.secondaryOfferTextLocation, longWaitConfig) {
-                        assertEquals("Подписка Плюс Больше кино", it)
+                    "Ожидается текст о большем количестве кино" {
+                        waitForElement(PlusAdsPage.secondaryOfferTextLocation, longWaitConfig) {
+                            assertEquals("Подписка Плюс Больше кино", it.text)
+                        }
                     }
-                }
-                "Нажимаем на кнопку 'Пропустить'" {
-                    waitForElementAndClick(PlusAdsPage.skipButtonLocation)
+                    "Нажимаем на кнопку 'Пропустить'" {
+                        waitForElement(PlusAdsPage.skipButtonLocation) {
+                            click(it)
+                        }
+                    }
                 }
             }
         }

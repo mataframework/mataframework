@@ -45,7 +45,7 @@ class MataAndroidDriver(
         }
         val capabilities = DesiredCapabilities()
         capabilities.setCapability(MobileCapabilityType.APP, appFile.absolutePath)
-        capabilities.setCapability(MobileCapabilityType.FULL_RESET, fullReset)
+        capabilities.setCapability(MobileCapabilityType.NO_RESET, !fullReset)
         capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.ANDROID_UIAUTOMATOR2)
         capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, Platform.ANDROID.toString().lowercase())
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android Emulator")
