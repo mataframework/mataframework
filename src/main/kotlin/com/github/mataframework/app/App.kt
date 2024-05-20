@@ -7,9 +7,10 @@ import io.appium.java_client.screenrecording.CanRecordScreen
 import io.qameta.allure.Allure
 import org.openqa.selenium.OutputType
 import org.openqa.selenium.WebDriverException
+import org.openqa.selenium.logging.LogEntry
 import java.util.*
 
-class App<T> internal constructor( val driver: T) :
+class App<T> internal constructor(val driver: T) :
     AutoCloseable where T : AppiumDriver<MobileElement>, T : CanRecordScreen {
     private var closed = false
 
@@ -19,6 +20,20 @@ class App<T> internal constructor( val driver: T) :
 
     fun hideKeyboard() {
         driver.hideKeyboard()
+    }
+
+    fun getLogs(
+        type: String,
+    ): List<LogEntry> {
+        return driver.manage()
+            .logs()[type]
+            ?.filterNotNull()
+            ?.toList()
+            ?: emptyList()
+    }
+
+    fun getServerLogs(): List<LogEntry> {
+        return getLogs("server")
     }
 
     fun stopRecordingScreen(attachment: String) {

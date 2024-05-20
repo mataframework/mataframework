@@ -68,14 +68,16 @@ class MainScreenTest {
                             tap(it.location.x, it.location.y)
                         }
                     }
-                    Platform.ANDROID {
-                        "Что-то делаем только на Android" {
-                            screenshot("Android скриншот")
+                    serverLogs("ServerLogs") {
+                        Platform.ANDROID {
+                            "Что-то делаем только на Android" {
+                                screenshot("Android скриншот")
+                            }
                         }
-                    }
-                    Platform.IOS {
-                        "Что-то делаем только на iOS" {
-                            screenshot("iOS скриншот")
+                        Platform.IOS {
+                            "Что-то делаем только на iOS" {
+                                screenshot("iOS скриншот")
+                            }
                         }
                     }
                     "На странице присутствует 1-ый рекламный текст" {

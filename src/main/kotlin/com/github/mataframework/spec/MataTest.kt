@@ -6,13 +6,13 @@ import com.github.mataframework.pages.PageObject
 import com.github.mataframework.spec.listener.AppShutDownListener
 import com.github.mataframework.spec.listener.AppStartUpListener
 import com.github.mataframework.spec.option.AppOptions
-import com.github.mataframework.spec.option.ScreenShotOnFailOption
+import com.github.mataframework.spec.option.OnFailOption
 import kotlin.reflect.KClass
 
 
 fun mataTest(
     appOptions: AppOptions = AppOptions(),
-    screenShotOnFailOption: ScreenShotOnFailOption = ScreenShotOnFailOption(),
+    onFailOption: OnFailOption = OnFailOption(),
     appStartUpListeners: Array<KClass<out AppStartUpListener>> = arrayOf(),
     appShutDownListeners: Array<KClass<out AppShutDownListener>> = arrayOf(),
     test: MataTestSpec.() -> Unit
@@ -21,8 +21,8 @@ fun mataTest(
     val app = appLauncher.launch(appOptions.cleanRun)
     val pageObject = PageObject(app)
 
-    try {
-        val context = MataTestSpec(app, pageObject, screenShotOnFailOption)
+    app.use {
+        val context = MataTestSpec(it, pageObject, onFailOption)
 
         for (listenerKClass in appStartUpListeners) {
             val listener = listenerKClass.objectInstance
@@ -37,7 +37,5 @@ fun mataTest(
             listener?.onAppShutDown(context)
                 ?: throw MataFrameworkException("${listenerKClass.qualifiedName} is not object.")
         }
-    } finally {
-        app.close()
     }
 }

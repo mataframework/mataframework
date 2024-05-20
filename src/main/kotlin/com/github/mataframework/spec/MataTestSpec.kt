@@ -5,15 +5,20 @@ import com.github.mataframework.app.Configuration
 import com.github.mataframework.app.Platform
 import com.github.mataframework.exception.MataFrameworkException
 import com.github.mataframework.pages.PageObject
-import com.github.mataframework.spec.option.ScreenShotOnFailOption
+import com.github.mataframework.spec.option.OnFailOption
 import io.qameta.allure.Allure
 import org.openqa.selenium.OutputType
 import java.util.*
 
+/**
+ * Mata Test DSL Specification.
+ *
+ * @author sibmaks
+ */
 class MataTestSpec(
     private val app: App<*>,
     private val pageObject: PageObject,
-    private val screenShotOnFailOption: ScreenShotOnFailOption
+    private val onFailOption: OnFailOption
 ) {
     private var currentStepTrace: MutableList<Int> = mutableListOf(1)
     private var screenShotThrowable: MutableList<Throwable> = mutableListOf()
@@ -27,9 +32,14 @@ class MataTestSpec(
             try {
                 pageObject.scenery()
             } catch (e: Throwable) {
-                if (!screenShotThrowable.contains(e) && screenShotOnFailOption.enabled) {
-                    val screenshot = app.getScreenshotAs(OutputType.BYTES)
-                    Allure.addByteAttachmentAsync(screenShotOnFailOption.name, "image/png") { screenshot }
+                if (!screenShotThrowable.contains(e)) {
+                    if (onFailOption.makeScreenshot) {
+                        val screenshot = app.getScreenshotAs(OutputType.BYTES)
+                        Allure.addByteAttachmentAsync(onFailOption.screenshotName, "image/png") { screenshot }
+                    }
+                    if (onFailOption.saveServerLog) {
+                        attachServerLogs(onFailOption.serverLogName)
+                    }
                     screenShotThrowable.add(e)
                 }
                 throw e
@@ -75,6 +85,14 @@ class MataTestSpec(
         }
     }
 
+    fun serverLogs(name: String, inner: MataTestSpec.() -> Unit) {
+        try {
+            inner()
+        } finally {
+            attachServerLogs(name)
+        }
+    }
+
     fun hideKeyboard() {
         app.hideKeyboard()
     }
@@ -98,5 +116,13 @@ class MataTestSpec(
 
     private fun step(description: String, action: Allure.ThrowableRunnableVoid) {
         Allure.step(description, action)
+    }
+
+    private fun attachServerLogs(
+        name: String,
+    ) {
+        val logs = app.getServerLogs()
+            .joinToString(separator = "\n") { it.toString() }
+        Allure.attachment(name, logs)
     }
 }
