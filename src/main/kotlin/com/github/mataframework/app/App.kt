@@ -17,6 +17,10 @@ class App<T> internal constructor( val driver: T) :
         driver.startRecordingScreen()
     }
 
+    fun hideKeyboard() {
+        driver.hideKeyboard()
+    }
+
     fun stopRecordingScreen(attachment: String) {
         val content = driver.stopRecordingScreen()
         Allure.addByteAttachmentAsync(attachment, "video/mp4", "mp4") {

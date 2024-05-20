@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import skips.SkipLanding
 import uitests.ui.LandingPage
 import uitests.ui.SearchPage
+import kotlin.test.assertEquals
 
 class SearchScreenTest {
 
@@ -14,7 +15,7 @@ class SearchScreenTest {
     fun checkOpenApp() {
         val longWaitConfig = LookupConfig(30000)
 
-        val inputText = "Форест Гамп"
+        val inputList = listOf("Форест Гамп", "Титаник")
 
         mataTest(
             appOptions = AppOptions(cleanRun = true),
@@ -26,21 +27,37 @@ class SearchScreenTest {
                 }
             }
             "Страница 'Поиск'" {
-                "Вводим '${inputText}'" {
-                    waitForElement(SearchPage.editTextElement) {
-                        input(it, inputText)
+                inputList.forEachIndexed { index, inputText ->
+                    if(index > 0) {
+                        "${step()} Сбрасываем значение поиска" {
+                            waitForElementOrNull(SearchPage.resetButton) {
+                                click(it)
+                            }
+                        }
                     }
-                    "Должен исчезнуть блок 'Рекомендации для просмотра'" {
-                        waitForElementDisappear(SearchPage.recommendedToLookTextElement)
-                    }
-                    "Должен появится блок 'Результаты'" {
-                        waitForElement(SearchPage.SearchResultSection.allResultsElement, longWaitConfig)
-                    }
-                    "Должен появится блок 'Предложенные элементы'" {
-                        waitForElement(SearchPage.SearchResultSection.suggestsElement)
-                    }
-                    "Должен появится кнопка 'Все результаты'" {
-                        waitForElement(SearchPage.SearchResultSection.toResultsElement)
+                    "${step()} Вводим '${inputText}'" {
+                        waitForElement(SearchPage.editTextElement) {
+                            input(it, inputText)
+                            hideKeyboard()
+                        }
+                        "${stepTrace(".", 1)} Должен исчезнуть блок 'Рекомендации для просмотра'" {
+                            waitForElementDisappear(SearchPage.recommendedToLookTextElement)
+                        }
+                        "${stepTrace(".", 1)} Должен появится блок 'Результаты'" {
+                            waitForElement(SearchPage.SearchResultSection.allResultsElement, longWaitConfig) {
+                                screenshot()
+                            }
+                        }
+                        "${stepTrace(".", 1)} Должен появится блок 'Предложенные элементы'" {
+                            waitForElement(SearchPage.SearchResultSection.suggestsElement)
+                        }
+                        "${stepTrace(".", 1)} Может появится кнопка 'К результатам'" {
+                            waitForElementOrNull(SearchPage.SearchResultSection.toResultsElement) {
+                                "Кнопка 'К результатам' появилась" {
+                                    assertEquals("true", it.getAttribute("clickable"))
+                                }
+                            }
+                        }
                     }
                 }
             }

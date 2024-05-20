@@ -7,8 +7,6 @@ import com.github.mataframework.spec.listener.AppShutDownListener
 import com.github.mataframework.spec.listener.AppStartUpListener
 import com.github.mataframework.spec.option.AppOptions
 import com.github.mataframework.spec.option.ScreenShotOnFailOption
-import io.qameta.allure.Allure
-import org.openqa.selenium.OutputType
 import kotlin.reflect.KClass
 
 
@@ -24,7 +22,7 @@ fun mataTest(
     val pageObject = PageObject(app)
 
     try {
-        val context = MataTestSpec(app, pageObject)
+        val context = MataTestSpec(app, pageObject, screenShotOnFailOption)
 
         for (listenerKClass in appStartUpListeners) {
             val listener = listenerKClass.objectInstance
@@ -39,12 +37,6 @@ fun mataTest(
             listener?.onAppShutDown(context)
                 ?: throw MataFrameworkException("${listenerKClass.qualifiedName} is not object.")
         }
-    } catch (e: Throwable) {
-        if (screenShotOnFailOption.enabled) {
-            val screenshot = app.getScreenshotAs(OutputType.BYTES)
-            Allure.addByteAttachmentAsync(screenShotOnFailOption.name, "image/png") { screenshot }
-        }
-        throw e
     } finally {
         app.close()
     }

@@ -1,5 +1,6 @@
 package uitests
 
+import com.github.mataframework.app.Platform
 import com.github.mataframework.pages.LookupConfig
 import com.github.mataframework.spec.mataTest
 import com.github.mataframework.spec.option.AppOptions
@@ -13,7 +14,7 @@ import uitests.ui.LandingPage
 import kotlin.test.assertTrue
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
-class MainScreenTest  {
+class MainScreenTest {
 
     @Test
     @Order(1)
@@ -24,30 +25,30 @@ class MainScreenTest  {
             appOptions = AppOptions(cleanRun = true),
             appStartUpListeners = arrayOf(SkipLanding::class)
         ) {
-            "Шаг {step} Главная страница" {
+            "Главная страница" {
                 screenshot("Главная страница")
-                "Шаг {step} В верхнем меню активна кнопка 'Моё кино'" {
+                "Шаг ${stepTrace(".")} верхнем меню активна кнопка 'Моё кино'" {
                     waitForElement(LandingPage.TopNavigation.myCinemaLocation, longWaitConfig) {
                         screenshot(it, "Элемент верхнего меню")
                         assertEquals("true", it.getAttribute("focused"))
                     }
                 }
-                "Шаг {step} В нижнем меню активна кнопка 'Главная'" {
+                "Шаг ${stepTrace(".")} В нижнем меню активна кнопка 'Главная'" {
                     waitForElement(LandingPage.BottomNavigation.hdLocation) {
                         assertTrue { it.isSelected }
                         assertTrue { it.isEnabled }
                     }
                 }
-                "Шаг {step} На странице присутствует 1-ый рекламный текст" {
+                "Шаг ${stepTrace(".")} На странице присутствует 1-ый рекламный текст" {
                     waitForElement(LandingPage.ads1stLineLocation)
                 }
-                "Шаг {step} На странице присутствует 2-ой рекламный текст" {
+                "Шаг ${stepTrace(".")} На странице присутствует 2-ой рекламный текст" {
                     waitForElement(LandingPage.ads2ndLineLocation)
                 }
-                "Шаг {step} На странице присутствует кнопка 'Попробовать бесплатно'" {
+                "Шаг ${stepTrace(".")} На странице присутствует кнопка 'Попробовать бесплатно'" {
                     waitForElement(LandingPage.tryFreeButtonLocation)
                 }
-                "Шаг {step} На странице присутствует информационный блок" {
+                "Шаг ${stepTrace(".")} На странице присутствует информационный блок" {
                     waitForElement(LandingPage.infoBlockLocation)
                 }
             }
@@ -65,6 +66,16 @@ class MainScreenTest  {
                     "В нижнем меню тап по кнопке 'Главная'" {
                         waitForElement(LandingPage.BottomNavigation.hdLocation) {
                             tap(it.location.x, it.location.y)
+                        }
+                    }
+                    Platform.ANDROID {
+                        "Что-то делаем только на Android" {
+                            screenshot("Android скриншот")
+                        }
+                    }
+                    Platform.IOS {
+                        "Что-то делаем только на iOS" {
+                            screenshot("iOS скриншот")
                         }
                     }
                     "На странице присутствует 1-ый рекламный текст" {

@@ -6,7 +6,9 @@ import com.github.mataframework.app.PlatformProperty
 import com.github.mataframework.exception.MataFrameworkException
 import com.github.mataframework.pages.scroll.ScrollAction
 import io.appium.java_client.MobileElement
+import io.qameta.allure.Allure
 import org.openqa.selenium.By
+import org.openqa.selenium.OutputType
 import org.openqa.selenium.TimeoutException
 import org.openqa.selenium.remote.RemoteWebElement
 import org.openqa.selenium.support.ui.ExpectedConditions
@@ -304,23 +306,32 @@ open class PageObject(val app: App<*>) {
         }
     }
 
+    /**
+     * Perform [scrollAction] on [element].
+     */
     fun scroll(
         element: RemoteWebElement,
-        elementScrollAction: ScrollAction
+        scrollAction: ScrollAction
     ) {
         val location = element.location
         val x = location.x
         val y = location.y
 
-        pageController.scroll(x, y, elementScrollAction)
+        pageController.scroll(x, y, scrollAction)
     }
 
+    /**
+     * Perform click on [element].
+     */
     fun click(
         element: RemoteWebElement
     ) {
         element.click()
     }
 
+    /**
+     * Input [input] into [element]. If [click] is true then click on [element] before input.
+     */
     fun input(
         element: RemoteWebElement,
         input: String,
@@ -330,5 +341,17 @@ open class PageObject(val app: App<*>) {
             element.click()
         }
         element.sendKeys(input)
+    }
+
+    /**
+     * Make screenshot of [element] and save as attachment with [name].
+     */
+    fun screenshot(
+        element: RemoteWebElement,
+        name: String
+    ) {
+        val screenshot = element.getScreenshotAs(OutputType.BYTES)
+
+        Allure.addByteAttachmentAsync(name, "image/png") { screenshot }
     }
 }
