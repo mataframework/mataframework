@@ -31,9 +31,14 @@ jobs:
         uses: android-actions/setup-android@v2
         with:
           api-level: 27
-          target: default
+          target: google_apis
           arch: x86
-          emulator-build: system-images;android-27;google_apis;x86
+
+      - name: Update SDK tools
+        run: sdkmanager --update
+
+      - name: Install system image
+        run: sdkmanager "system-images;android-27;google_apis;x86"
 
       - name: Start ADB server
         run: adb start-server
