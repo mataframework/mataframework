@@ -4,15 +4,19 @@ import com.github.mataframework.app.driver.MataAndroidDriver
 import com.github.mataframework.app.driver.MataIosDriver
 import io.appium.java_client.AppiumDriver
 import io.appium.java_client.MobileElement
+import io.appium.java_client.screenrecording.CanRecordScreen
 
 class AppLauncher {
-    private var app: App? = null
+    private var app: App<*>? = null
     private val retryCount: Int = 1
 
-    fun launch(fullReset: Boolean): App {
+    fun launch(fullReset: Boolean): App<*> {
         // TODO if last app is not closed
 
-        val driver: AppiumDriver<MobileElement> = createDriver(fullReset)
+        val driver = createDriver(fullReset)
+        if (driver !is CanRecordScreen) {
+            throw Exception("Driver does not support screen recording")
+        }
         val instance = App(driver)
         app = instance
 

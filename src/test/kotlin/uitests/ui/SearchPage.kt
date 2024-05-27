@@ -10,6 +10,10 @@ object SearchPage {
         Platform.ANDROID to By.id("ru.kinopoisk:id/search_edit_text")
     )
 
+    val resetButton: PlatformProperty<By> = PlatformProperty(
+        Platform.ANDROID to By.id("ru.kinopoisk:id/reset_button_container")
+    )
+
     val recommendedToLookTextElement: PlatformProperty<By> = PlatformProperty(
         Platform.ANDROID to By.id("ru.kinopoisk:id/search_recycler_view")
     )

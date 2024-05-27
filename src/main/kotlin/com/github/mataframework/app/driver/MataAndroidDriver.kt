@@ -2,7 +2,6 @@ package com.github.mataframework.app.driver
 
 import com.github.mataframework.app.Configuration
 import com.github.mataframework.exception.MataFrameworkException
-import io.appium.java_client.AppiumDriver
 import io.appium.java_client.MobileElement
 import io.appium.java_client.android.AndroidDriver
 import io.appium.java_client.remote.AutomationName
@@ -16,8 +15,8 @@ import java.net.MalformedURLException
 
 class MataAndroidDriver(
     private val fullReset: Boolean
-) : MataDriver {
-    override fun buildDriver(retryCount: Int): AppiumDriver<MobileElement> {
+) : MataDriver<AndroidDriver<MobileElement>> {
+    override fun buildDriver(retryCount: Int): AndroidDriver<MobileElement> {
         return try {
             AndroidDriver(Configuration.getAppiumUrl(), getCapabilities())
         } catch (e: SessionNotCreatedException) {
@@ -46,7 +45,7 @@ class MataAndroidDriver(
         }
         val capabilities = DesiredCapabilities()
         capabilities.setCapability(MobileCapabilityType.APP, appFile.absolutePath)
-        capabilities.setCapability(MobileCapabilityType.FULL_RESET, fullReset)
+        capabilities.setCapability(MobileCapabilityType.NO_RESET, !fullReset)
         capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.ANDROID_UIAUTOMATOR2)
         capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, Platform.ANDROID.toString().lowercase())
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android Emulator")
