@@ -51,11 +51,6 @@ jobs:
       - name: Install emulator
         run: sdkmanager "emulator"
 
-      - name: Set up environment variables
-        run: |
-          echo "export ANDROID_AVD_HOME=$HOME/.config/.android/avd" >> $GITHUB_ENV
-        shell: bash
-
       - name: Start ADB server
         run: adb start-server
 
