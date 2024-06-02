@@ -16,6 +16,7 @@ env:
   ANDROID_SDK_PACKAGES: system-images;android-27;google_apis;arm64-v8a
   EMULATOR_TIMEOUT: 350
   EMULATOR_NAME: test_avd
+  DEVICE_NAME: pixel
 
 jobs:
   test:
@@ -64,8 +65,11 @@ jobs:
       - name: Start ADB server
         run: adb start-server
 
+      - name: List available devices
+        run: avdmanager list device
+
       - name: Create AVD
-        run: echo "no" | avdmanager create avd -n ${{ env.EMULATOR_NAME }} -k "${{ env.ANDROID_SDK_PACKAGES }}" --device "${{ env.EMULATOR_NAME }}"
+        run: echo "no" | avdmanager create avd -n ${{ env.EMULATOR_NAME }} -k "${{ env.ANDROID_SDK_PACKAGES }}" --device "${{ env.DEVICE_NAME }}"
 
       - name: Launch emulator
         run: |
