@@ -15,7 +15,7 @@ env:
   ANDROID_BUILD_TOOLS_VERSION: 33.0.2
   ANDROID_SDK_PACKAGES: system-images;android-27;google_apis;arm64-v8a
   EMULATOR_TIMEOUT: 350
-  EMULATOR_NAME: pixel
+  EMULATOR_NAME: test_avd
 
 jobs:
   test:
