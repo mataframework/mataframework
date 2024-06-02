@@ -51,7 +51,9 @@ jobs:
         run: sdkmanager "emulator"
 
       - name: Set up environment variables
-        run: echo "export ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
+        run: |
+          echo "export ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
+          echo "export ANDROID_AVD_HOME=$HOME/.config/.android/avd" >> $GITHUB_ENV
         shell: bash
 
       - name: Start ADB server
@@ -61,13 +63,13 @@ jobs:
         run: avdmanager list device
 
       - name: Create AVD
-        run: echo "no" | avdmanager --verbose create avd --force -n ${{ env.EMULATOR_NAME }} -k "${{ env.ANDROID_SDK_PACKAGES }}" --device "${{ env.DEVICE_NAME }}"
+        run: echo "no" | avdmanager create avd -n ${{ env.EMULATOR_NAME }} -k "${{ env.ANDROID_SDK_PACKAGES }}" --device "${{ env.DEVICE_NAME }}"
 
       - name: List created AVDs
         run: avdmanager list avd
 
       - name: Check AVD files
-        run: ls -al ~/.android/avd/
+        run: ls -al $ANDROID_AVD_HOME
 
       - name: Launch emulator
         run: |
