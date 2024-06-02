@@ -9,7 +9,7 @@ on:
       - main
 
 env:
-  ANDROID_SDK_PACKAGES: system-images;android-27;google_apis;arm64-v8a
+  ANDROID_SDK_PACKAGES: system-images;android-27;google_apis;x86_64
   EMULATOR_TIMEOUT: 350
   EMULATOR_NAME: test_avd
   DEVICE_NAME: pixel
@@ -76,7 +76,7 @@ jobs:
           adb shell settings put global hidden_api_policy_pre_p_apps 1 &
           adb shell settings put global hidden_api_policy_p_apps 1 &
           adb shell settings put global hidden_api_policy 1 &
-          sleep 120
+          sleep 180
 
       - name: Unzip APK
         run: |
