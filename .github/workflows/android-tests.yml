@@ -13,7 +13,7 @@ env:
   ANDROID_TARGET: google_apis
   API_LEVEL: 27
   ANDROID_BUILD_TOOLS_VERSION: 33.0.2
-  ANDROID_SDK_PACKAGES: system-images;android-33;google_apis_playstore;x86_64 platforms;android-33 build-tools;33.0.2 platform-tools emulator
+  ANDROID_SDK_PACKAGES: system-images;android-27;google_apis;x86_64
   EMULATOR_TIMEOUT: 350
   EMULATOR_NAME: nexus
 
@@ -37,18 +37,34 @@ jobs:
         with:
           java-version: 17
 
-      - name: Add avdmanager and sdkmanager to system PATH
-        run: |
-          echo "$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/${{ env.ANDROID_BUILD_TOOLS_VERSION }}" >> $GITHUB_PATH
+      - name: Download and setup Android SDK
+        uses: android-actions/setup-android@v2
+        with:
+          api-level: ${{ env.ANDROID_BUILD_TOOLS_VERSION }}
+          target: ${{ env.ANDROID_TARGET }}
+          arch: ${{ env.ANDROID_ARCH }}
 
-      - name: Install Sdk
-        run: |
-          yes Y | sdkmanager --licenses
-          sdkmanager --install ${ANDROID_SDK_PACKAGES}
+      - name: Update SDK tools
+        run: sdkmanager --update
 
-      - name: Build emulator
-        run: |
-          echo "no" | avdmanager --verbose create avd --force -n $EMULATOR_NAME --abi "${ANDROID_TARGET}/${ANDROID_ARCH}" -k "system-images;android-${API_LEVEL};${ANDROID_TARGET};${ANDROID_ARCH}"
+      - name: Install system image
+        run: sdkmanager "${{ env.ANDROID_SDK_PACKAGES }}"
+
+      - name: Install platform tools
+        run: sdkmanager "platform-tools"
+
+      - name: Install emulator
+        run: sdkmanager "emulator"
+
+      - name: Set up environment variables
+        run: echo "export ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Start ADB server
+        run: adb start-server
+
+      - name: Create AVD
+        run: echo "no" | avdmanager create avd -n test -k "${{ env.ANDROID_SDK_PACKAGES }}" --device "pixel"
 
       - name: Launch emulator
         run: |
