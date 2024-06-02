@@ -58,7 +58,7 @@ jobs:
 
       - name: Start emulator
         run: |
-          nohup $ANDROID_HOME/emulator/emulator -avd test -no-audio -no-window -gpu off -camera-back none -camera-front none &
+          nohup $ANDROID_HOME/emulator/emulator -avd test -no-audio -no-window -gpu swiftshader_indirect -camera-back none -camera-front none -no-boot-anim &
           adb wait-for-device
           adb shell settings put global window_animation_scale 0 &
           adb shell settings put global transition_animation_scale 0 &
