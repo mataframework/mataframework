@@ -15,7 +15,7 @@ env:
   ANDROID_BUILD_TOOLS_VERSION: 33.0.2
   ANDROID_SDK_PACKAGES: system-images;android-27;google_apis;arm64-v8a
   EMULATOR_TIMEOUT: 350
-  EMULATOR_NAME: nexus
+  EMULATOR_NAME: pixel
 
 jobs:
   test:
@@ -65,7 +65,7 @@ jobs:
         run: adb start-server
 
       - name: Create AVD
-        run: echo "no" | avdmanager create avd -n test -k "${{ env.ANDROID_SDK_PACKAGES }}" --device "pixel"
+        run: echo "no" | avdmanager create avd -n test -k "${{ env.ANDROID_SDK_PACKAGES }}" --device "${{ env.EMULATOR_NAME }}"
 
       - name: Launch emulator
         run: |
