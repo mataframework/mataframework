@@ -9,7 +9,7 @@ on:
       - main
 
 env:
-  ANDROID_SDK_PACKAGES: system-images;android-29;google_apis;x86
+  ANDROID_SDK_PACKAGES: system-images;android-28;google_apis;x86_64
   EMULATOR_TIMEOUT: 350
   EMULATOR_NAME: test_avd
   DEVICE_NAME: pixel
@@ -72,14 +72,14 @@ jobs:
       - name: Launch emulator
         run: |
           nohup $ANDROID_HOME/emulator/emulator @${{ env.EMULATOR_NAME }} -no-window -no-snapshot -screen no-touch -noaudio -memory 2048 -no-boot-anim -accel off -camera-back none -gpu swiftshader_indirect &
+          sleep 120
           adb wait-for-device
-          adb shell settings put global window_animation_scale 0 &
-          adb shell settings put global transition_animation_scale 0 &
-          adb shell settings put global animator_duration_scale 0 &
-          adb shell settings put global hidden_api_policy_pre_p_apps 1 &
-          adb shell settings put global hidden_api_policy_p_apps 1 &
-          adb shell settings put global hidden_api_policy 1 &
-          sleep 180
+          adb shell settings put global window_animation_scale 0
+          adb shell settings put global transition_animation_scale 0
+          adb shell settings put global animator_duration_scale 0
+          adb shell settings put global hidden_api_policy_pre_p_apps 1
+          adb shell settings put global hidden_api_policy_p_apps 1
+          adb shell settings put global hidden_api_policy 1
 
       - name: Unzip APK
         run: |
