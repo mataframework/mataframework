@@ -61,10 +61,13 @@ jobs:
         run: avdmanager list device
 
       - name: Create AVD
-        run: echo "no" | avdmanager create avd -n ${{ env.EMULATOR_NAME }} -k "${{ env.ANDROID_SDK_PACKAGES }}" --device "${{ env.DEVICE_NAME }}"
+        run: echo "no" | avdmanager --verbose create avd --force -n ${{ env.EMULATOR_NAME }} -k "${{ env.ANDROID_SDK_PACKAGES }}" --device "${{ env.DEVICE_NAME }}"
 
       - name: List created AVDs
         run: avdmanager list avd
+
+      - name: Check AVD files
+        run: ls -al ~/.android/avd/
 
       - name: Launch emulator
         run: |
