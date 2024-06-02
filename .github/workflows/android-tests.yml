@@ -23,6 +23,7 @@ jobs:
     services:
       appium:
         image: appium/appium
+        options: --relaxed-security
         ports:
           - 4723:4723
 
@@ -91,3 +92,9 @@ jobs:
 
       - name: Run tests
         run: ./gradlew build
+
+      - name: Upload JUnit test report
+        uses: actions/upload-artifact@v3
+        with:
+          name: junit-test-report
+          path: build/reports/tests/test/
