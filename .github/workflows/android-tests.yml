@@ -65,7 +65,7 @@ jobs:
         run: adb start-server
 
       - name: Create AVD
-        run: echo "no" | avdmanager create avd -n test -k "${{ env.ANDROID_SDK_PACKAGES }}" --device "${{ env.EMULATOR_NAME }}"
+        run: echo "no" | avdmanager create avd -n ${{ env.EMULATOR_NAME }} -k "${{ env.ANDROID_SDK_PACKAGES }}" --device "${{ env.EMULATOR_NAME }}"
 
       - name: Launch emulator
         run: |
