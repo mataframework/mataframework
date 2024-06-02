@@ -40,6 +40,16 @@ jobs:
       - name: Install system image
         run: sdkmanager "system-images;android-27;google_apis;x86"
 
+      - name: Install platform tools
+        run: sdkmanager "platform-tools"
+
+      - name: Install emulator
+        run: sdkmanager "emulator"
+
+      - name: Set up environment variables
+        run: echo "export ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
+        shell: bash
+
       - name: Start ADB server
         run: adb start-server
 
@@ -48,7 +58,7 @@ jobs:
 
       - name: Start emulator
         run: |
-          nohup emulator -avd test -no-audio -no-window -gpu off -camera-back none -camera-front none &
+          nohup $ANDROID_HOME/emulator/emulator -avd test -no-audio -no-window -gpu off -camera-back none -camera-front none &
           adb wait-for-device
           adb shell settings put global window_animation_scale 0 &
           adb shell settings put global transition_animation_scale 0 &
