@@ -1,6 +1,8 @@
 package com.github.mataframework.app
 
+import com.github.mataframework.exception.MataFrameworkException
 import com.github.mataframework.utils.Constants
+import java.net.URI
 import java.net.URL
 
 object Configuration {
@@ -53,8 +55,9 @@ object Configuration {
         return appVersionProperty.get()
     }
 
-    fun getAppLocation(): String {
-        return appLocationProperty.get()
+    fun getAppLocation(): URI {
+        return javaClass.classLoader.getResource(appLocationProperty.get())?.toURI()
+            ?: throw MataFrameworkException("App location not found")
     }
 
     fun getIosDeviceName(): String {
