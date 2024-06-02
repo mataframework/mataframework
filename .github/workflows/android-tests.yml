@@ -13,6 +13,7 @@ env:
   EMULATOR_TIMEOUT: 350
   EMULATOR_NAME: test_avd
   DEVICE_NAME: pixel
+  ANDROID_AVD_HOME: /home/runner/.config/.android/avd
 
 jobs:
   test:
@@ -52,7 +53,6 @@ jobs:
 
       - name: Set up environment variables
         run: |
-          echo "export ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
           echo "export ANDROID_AVD_HOME=$HOME/.config/.android/avd" >> $GITHUB_ENV
         shell: bash
 
@@ -69,12 +69,13 @@ jobs:
         run: avdmanager list avd
 
       - name: Check AVD files
-        run: ls -al $ANDROID_AVD_HOME
+        run: ls -al ~/.config/.android/avd/
 
       - name: Launch emulator
         run: |
           chmod +x ./start_emu_headless.sh
-          EMULATOR_TIMEOUT=$EMULATOR_TIMEOUT EMULATOR_NAME=$EMULATOR_NAME ./start_emu_headless.sh
+          source $GITHUB_ENV
+          ./start_emu_headless.sh
 
       - name: Unzip APK
         run: |
