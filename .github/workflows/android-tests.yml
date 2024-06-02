@@ -82,9 +82,7 @@ jobs:
           adb shell settings put global hidden_api_policy 1
 
       - name: Unzip APK
-        run: |
-          cd src/test/resources/
-          tar -xf android.tar.xz
+        run: tar -xf src/test/resources/android.tar.xz -C src/test/resources/
 
       - name: Run tests
         run: ./gradlew build
