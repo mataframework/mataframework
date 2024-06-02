@@ -9,7 +9,7 @@ on:
       - main
 
 env:
-  ANDROID_SDK_PACKAGES: system-images;android-27;google_apis;x86_64
+  ANDROID_SDK_PACKAGES: system-images;android-29;google_apis;x86
   EMULATOR_TIMEOUT: 350
   EMULATOR_NAME: test_avd
   DEVICE_NAME: pixel
@@ -41,6 +41,9 @@ jobs:
 
       - name: Update SDK tools
         run: sdkmanager --update
+
+      - name: List available system images
+        run: sdkmanager --list | grep "system-images"
 
       - name: Install system image
         run: sdkmanager "${{ env.ANDROID_SDK_PACKAGES }}"
