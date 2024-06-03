@@ -8,13 +8,6 @@ on:
     branches:
       - main
 
-env:
-  ANDROID_SDK_PACKAGES: system-images;android-28;google_apis;x86_64
-  EMULATOR_TIMEOUT: 350
-  EMULATOR_NAME: test_avd
-  DEVICE_NAME: pixel
-  ANDROID_AVD_HOME: /home/runner/.config/.android/avd
-
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -38,33 +31,6 @@ jobs:
       - name: Update SDK tools
         run: yes | sdkmanager --update
 
-      - name: List available system images
-        run: sdkmanager --list | grep "system-images"
-
-      - name: Install system image
-        run: sdkmanager "${{ env.ANDROID_SDK_PACKAGES }}"
-
-      - name: Install platform tools
-        run: sdkmanager "platform-tools"
-
-      - name: Install emulator
-        run: sdkmanager "emulator"
-
-      - name: Start ADB server
-        run: adb start-server
-
-      - name: List available devices
-        run: avdmanager list device
-
-      - name: Create AVD
-        run: echo "no" | avdmanager create avd -n ${{ env.EMULATOR_NAME }} -k "${{ env.ANDROID_SDK_PACKAGES }}" --device "${{ env.DEVICE_NAME }}"
-
-      - name: List created AVDs
-        run: avdmanager list avd
-
-      - name: Check AVD files
-        run: ls -al ~/.config/.android/avd/
-
       - name: Install Appium
         run: sudo npm install -g appium --unsafe-perm=true --allow-root
 
@@ -75,34 +41,21 @@ jobs:
         run: |
           nohup appium --allow-insecure=get_server_logs > appium.log 2>&1 &
 
-      - name: Launch emulator
-        run: |
-          nohup $ANDROID_HOME/emulator/emulator @${{ env.EMULATOR_NAME }} -no-metrics -no-snapshot -noaudio -gpu swiftshader_indirect -no-boot-anim -port 5554 &
-          sleep 180
-          adb wait-for-device
-          adb shell settings put global window_animation_scale 0
-          adb shell settings put global transition_animation_scale 0
-          adb shell settings put global animator_duration_scale 0
-          adb shell settings put global hidden_api_policy_pre_p_apps 1
-          adb shell settings put global hidden_api_policy_p_apps 1
-          adb shell settings put global hidden_api_policy 1
-          # Check if the emulator is fully booted
-          boot_completed=$(adb shell getprop sys.boot_completed | tr -d '\r')
-          while [ "$boot_completed" != "1" ]; do
-            echo "Waiting for emulator..."
-            sleep 10
-            boot_completed=$(adb shell getprop sys.boot_completed | tr -d '\r')
-          done
-          echo "Emulator is fully booted."
-
       - name: Unzip APK
         run: |
           pwd
           ls -la
           tar -xf src/test/resources/android.tar.xz -C src/test/resources/
 
-      - name: Run tests
-        run: ./gradlew build
+      - name: Start emulator and run tests
+        uses: ReactiveCircus/android-emulator-runner@v2
+        with:
+          api-level: 28
+          target: google_apis
+          arch: x86_64
+          profile: pixel
+          emulator-options: -no-window -gpu swiftshader_indirect
+          script: ./gradlew build
 
       - name: Upload JUnit test report
         if: always()
