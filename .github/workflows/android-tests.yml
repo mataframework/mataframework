@@ -1,5 +1,9 @@
 name: Android Tests
 
+permissions:
+  contents: write
+  pages: write
+
 on:
   push:
     branches:
