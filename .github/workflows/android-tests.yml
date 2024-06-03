@@ -96,8 +96,16 @@ jobs:
       - name: Run tests
         run: ./gradlew build
 
-      - name: Upload JUnit test report
+      - name: Upload junit artifacts
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: junit-test-report
           path: build/reports/tests/test/
+
+      - name: Upload appium artifacts
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: appium-report
+          path: appium.log
