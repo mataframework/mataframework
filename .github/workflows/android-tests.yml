@@ -88,6 +88,13 @@ jobs:
           name: junit-test-report
           path: build/reports/tests/test/
 
+      - name: Upload Allure test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-test-results
+          path: build/allure-results/
+
       - name: Upload appium artifacts
         if: always()
         uses: actions/upload-artifact@v3
