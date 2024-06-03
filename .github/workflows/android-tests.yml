@@ -72,7 +72,7 @@ jobs:
         run: appium driver install uiautomator2
 
       - name: Run Appium
-        run: appium --allow-insecure=get_server_logs
+        run: nohup appium --allow-insecure=get_server_logs
 
       - name: Launch emulator
         run: |
