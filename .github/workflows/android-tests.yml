@@ -26,9 +26,6 @@ jobs:
         with:
           lfs: 'true'
 
-      - name: Start Appium server
-        run: docker run -d --name appium -p 4723:4723 --network="host" appium/appium --relaxed-security
-
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -67,6 +64,15 @@ jobs:
 
       - name: Check AVD files
         run: ls -al ~/.config/.android/avd/
+
+      - name: Install Appium
+        run: sudo npm install -g appium --unsafe-perm=true --allow-root
+
+      - name: Install uiautomator2
+        run: appium driver install uiautomator2
+
+      - name: Run Appium
+        run: appium --allow-insecure=get_server_logs
 
       - name: Launch emulator
         run: |
