@@ -73,7 +73,7 @@ jobs:
 
       - name: Run Appium as daemon
         run: |
-          nohup appium --allow-insecure=get_server_logs --detach > appium.log 2>&1 &
+          nohup appium --allow-insecure=get_server_logs > appium.log 2>&1 &
 
       - name: Launch emulator
         run: |
