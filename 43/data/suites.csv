@@ -1,0 +1,6 @@
+"Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
+"broken","Mon Jun 03 10:15:54 GMT 2024","Mon Jun 03 10:16:28 GMT 2024","34431","","uitests.MainScreenTest","","uitests.MainScreenTest","checkDoSomething","checkDoSomething()",""
+"passed","Mon Jun 03 10:13:11 GMT 2024","Mon Jun 03 10:14:48 GMT 2024","96717","","uitests.IntroductionScreenTest","","uitests.IntroductionScreenTest","checkIntroductionPages","Проверка вступительных экранов",""
+"passed","Mon Jun 03 10:17:18 GMT 2024","Mon Jun 03 10:18:22 GMT 2024","64257","","uitests.SearchScreenTest","","uitests.SearchScreenTest","checkOpenApp","checkOpenApp()",""
+"passed","Mon Jun 03 10:16:28 GMT 2024","Mon Jun 03 10:17:18 GMT 2024","49122","","uitests.MediaScreenTest","","uitests.MediaScreenTest","checkOpenApp","checkOpenApp()",""
+"broken","Mon Jun 03 10:14:48 GMT 2024","Mon Jun 03 10:15:54 GMT 2024","65934","","uitests.MainScreenTest","","uitests.MainScreenTest","Тестирование главной страницы","Тестирование главной страницы()",""
