@@ -71,8 +71,9 @@ jobs:
       - name: Install uiautomator2
         run: appium driver install uiautomator2
 
-      - name: Run Appium
-        run: nohup appium --allow-insecure=get_server_logs
+      - name: Run Appium as daemon
+        run: |
+          nohup appium --allow-insecure=get_server_logs --detach > appium.log 2>&1 &
 
       - name: Launch emulator
         run: |
