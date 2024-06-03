@@ -78,7 +78,7 @@ jobs:
       - name: Launch emulator
         run: |
           nohup $ANDROID_HOME/emulator/emulator @${{ env.EMULATOR_NAME }} -no-accel -no-window -no-snapshot -screen no-touch -noaudio -memory 2048 -no-boot-anim -gpu swiftshader_indirect -port 5554 &
-          sleep 120
+          sleep 180
           adb wait-for-device
           adb shell settings put global window_animation_scale 0
           adb shell settings put global transition_animation_scale 0
@@ -86,6 +86,13 @@ jobs:
           adb shell settings put global hidden_api_policy_pre_p_apps 1
           adb shell settings put global hidden_api_policy_p_apps 1
           adb shell settings put global hidden_api_policy 1
+          # Check if the emulator is fully booted
+          boot_completed=0
+          while [ $boot_completed -ne 1 ]; do
+            sleep 10
+            boot_completed=$(adb shell getprop sys.boot_completed | tr -d '\r')
+          done
+          echo "Emulator is fully booted."
 
       - name: Unzip APK
         run: |
@@ -96,7 +103,7 @@ jobs:
       - name: Run tests
         run: ./gradlew build
 
-      - name: Upload junit artifacts
+      - name: Upload JUnit test report
         if: always()
         uses: actions/upload-artifact@v3
         with:
@@ -107,5 +114,5 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: appium-report
+          name: appium-log
           path: appium.log
