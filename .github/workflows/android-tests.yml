@@ -77,7 +77,7 @@ jobs:
 
       - name: Launch emulator
         run: |
-          nohup $ANDROID_HOME/emulator/emulator @${{ env.EMULATOR_NAME }} -no-accel -no-window -no-snapshot -screen no-touch -noaudio -memory 2048 -no-boot-anim -gpu swiftshader_indirect -port 5554 &
+          nohup $ANDROID_HOME/emulator/emulator @${{ env.EMULATOR_NAME }} -no-metrics -no-accel -no-window -no-snapshot -screen no-touch -noaudio -memory 2048 -no-boot-anim -gpu swiftshader_indirect -port 5554 &
           sleep 180
           adb wait-for-device
           adb shell settings put global window_animation_scale 0
@@ -87,8 +87,9 @@ jobs:
           adb shell settings put global hidden_api_policy_p_apps 1
           adb shell settings put global hidden_api_policy 1
           # Check if the emulator is fully booted
-          boot_completed=0
-          while [ $boot_completed -ne 1 ]; do
+          boot_completed=$(adb shell getprop sys.boot_completed | tr -d '\r')
+          while [ "$boot_completed" != "1" ]; do
+            echo "Waiting for emulator..."
             sleep 10
             boot_completed=$(adb shell getprop sys.boot_completed | tr -d '\r')
           done
