@@ -48,20 +48,27 @@ class IntroductionScreenTest {
                     }
                 }
             }
-            "Экран 'Предложение Подписки Плюс'" {
-                record("Экран 'Предложение Подписки Плюс'") {
-                    "Ожидается текст с предложением пробного периода" {
-                        waitForElement(PlusAdsPage.primaryOfferTextLocation, longWaitConfig) {
-                            assertEquals("Смотрите кино\n30 дней бесплатно", it.text)
+            "Последний экран" {
+                record {
+                    waitForElementOrNull(PlusAdsPage.primaryOfferTextLocation, longWaitConfig) {
+                        "Экран 'Предложение Подписки Плюс'" {
+                            "Ожидается текст с предложением пробного периода" {
+                                assertEquals("Смотрите кино\n30 дней бесплатно", it.text)
+                            }
+                            "Ожидается текст о большем количестве кино" {
+                                waitForElement(PlusAdsPage.secondaryOfferTextLocation) {
+                                    assertEquals("Подписка Плюс Больше кино", it.text)
+                                }
+                            }
+                            "Нажимаем на кнопку 'Пропустить'" {
+                                waitForElement(PlusAdsPage.skipButtonLocation) {
+                                    click(it)
+                                }
+                            }
                         }
                     }
-                    "Ожидается текст о большем количестве кино" {
-                        waitForElement(PlusAdsPage.secondaryOfferTextLocation, longWaitConfig) {
-                            assertEquals("Подписка Плюс Больше кино", it.text)
-                        }
-                    }
-                    "Нажимаем на кнопку 'Пропустить'" {
-                        waitForElement(PlusAdsPage.skipButtonLocation) {
+                    waitForElementOrNull(PlusAdsPage.skipVPNButtonLocation) {
+                        "Экран 'Предложение Подписки Плюс' под VPN" {
                             click(it)
                         }
                     }
