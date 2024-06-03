@@ -26,6 +26,9 @@ jobs:
         with:
           lfs: 'true'
 
+      - name: Start Appium server
+        run: docker run -d --name appium -p 4723:4723 --network="host" appium/appium --relaxed-security
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -67,8 +70,8 @@ jobs:
 
       - name: Launch emulator
         run: |
-          nohup $ANDROID_HOME/emulator/emulator @${{ env.EMULATOR_NAME }} -no-accel -no-window -no-snapshot -screen no-touch -noaudio -memory 2048 -no-boot-anim -gpu swiftshader_indirect &
-          sleep 60
+          nohup $ANDROID_HOME/emulator/emulator @${{ env.EMULATOR_NAME }} -no-accel -no-window -no-snapshot -screen no-touch -noaudio -memory 2048 -no-boot-anim -gpu swiftshader_indirect -port 5554 &
+          sleep 120
           adb wait-for-device
           adb shell settings put global window_animation_scale 0
           adb shell settings put global transition_animation_scale 0
@@ -82,11 +85,6 @@ jobs:
           pwd
           ls -la
           tar -xf src/test/resources/android.tar.xz -C src/test/resources/
-
-      - name: Start Appium server with relaxed security
-        run: |
-          docker run -d --name appium -p 4723:4723 appium/appium --relaxed-security
-          sleep 10
 
       - name: Run tests
         run: ./gradlew build
