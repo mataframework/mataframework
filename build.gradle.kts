@@ -27,41 +27,30 @@ val agent: Configuration by configurations.creating {
     isCanBeResolved = true
 }
 
-
 dependencies {
     agent("org.aspectj:aspectjweaver:${versions["aspectJ"]}")
 
+    implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
-    // https://mvnrepository.com/artifact/org.jetbrains/annotations
-    implementation("org.jetbrains", "annotations", versions["jetbrains-annotations"])
-    // https://mvnrepository.com/artifact/io.appium/java-client
-    implementation("io.appium", "java-client", versions["appium"])
-    // https://mvnrepository.com/artifact/commons-io/commons-io
-    implementation("commons-io", "commons-io", versions["commons-io"])
-    // https://mvnrepository.com/artifact/org.apache.commons/commons-text
-    implementation("org.apache.commons", "commons-text", versions["commons-text"])
-    implementation("org.junit.jupiter", "junit-jupiter-api", versions["junit"])
-    // https://mvnrepository.com/artifact/io.qameta.allure/allure-java-commons
-    implementation("io.qameta.allure", "allure-java-commons", versions["allure"])
 
+    implementation("org.jetbrains:annotations:${versions["jetbrains-annotations"]}")
+    implementation("io.appium:java-client:${versions["appium"]}")
+    implementation("commons-io:commons-io:${versions["commons-io"]}")
+    implementation("org.apache.commons:commons-text:${versions["commons-text"]}")
+    implementation("org.junit.jupiter:junit-jupiter-api:${versions["junit"]}")
+    implementation("io.qameta.allure:allure-java-commons:${versions["allure"]}")
 
     testImplementation(kotlin("test"))
-    // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
-    testImplementation("org.junit.jupiter", "junit-jupiter-api", versions["junit"])
-
-    // Import allure-bom to ensure correct versions of all the dependencies are used
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${versions["junit"]}")
     testImplementation(platform("io.qameta.allure:allure-bom:${versions["allure"]}"))
-    // Add necessary Allure dependencies to dependencies section
     testImplementation("io.qameta.allure:allure-junit5")
 }
 
 tasks.test {
-    jvmArgs = listOf(
-        "-javaagent:${agent.singleFile}"
-    )
-    val platform = if (project.hasProperty("platform")) project.property("platform") as String else ""
+    jvmArgs = listOf("-javaagent:${agent.singleFile}")
+    val platform = project.findProperty("platform") as? String ?: ""
     useJUnitPlatform {
-        if (project.hasProperty("tag") && project.property("tag") != "") {
+        if (project.hasProperty("tag")) {
             val tags = project.property("tag").toString().split(",")
             includeTags(*tags.toTypedArray())
         }
